@@ -286,7 +286,7 @@ namespace YtDlpGui.WPF.Views {
 
                 if (Data.AutoDownloadAnalysed) {
                     //Download_Start();
-                    if (Data.selectedVideo != null && Data.selectedAudio != null) {
+                    if (Data.FormatSelection.selectedVideo != null && Data.FormatSelection.selectedAudio != null) {
                         Download_Start_Native();
                     }
                 }
@@ -321,7 +321,7 @@ namespace YtDlpGui.WPF.Views {
                         Data.Chapters.Add(new Chapters() { title = App.Lang.Main.ChaptersNone, type = ChaptersType.None });
                         Data.hasChapter = false;
                     }
-                    //Data.selectedChapter = Data.Chapters.First();
+                    //Data.FormatSelection.selectedChapter = Data.Chapters.First();
                 }
                 // Read Formats and Thumbnails
                 {
@@ -398,7 +398,7 @@ namespace YtDlpGui.WPF.Views {
                 $"{App.Lang.Files.webm}|*.webm|" +
                 $"{App.Lang.Files.mov}|*.mov|" +
                 $"{App.Lang.Files.flv}|*.flv";
-            dialog.DefaultExt = Data.selectedVideo.video_ext.ToLower();
+            dialog.DefaultExt = Data.FormatSelection.selectedVideo.video_ext.ToLower();
             dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), dialog.DefaultExt);
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var target = dialog.FileName;
@@ -417,7 +417,7 @@ namespace YtDlpGui.WPF.Views {
                 $"{App.Lang.Files.alac}|*.alac|" +
                 $"{App.Lang.Files.flac}|*.flac|" +
                 $"{App.Lang.Files.wav}|*.wav";
-            dialog.DefaultExt = Data.selectedAudio.acodec.ToLower();
+            dialog.DefaultExt = Data.FormatSelection.selectedAudio.acodec.ToLower();
             dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), dialog.DefaultExt);
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var target = dialog.FileName;
@@ -472,9 +472,9 @@ namespace YtDlpGui.WPF.Views {
                         RunningDLP.Add(dlp);
                         dlp.IsLive = Data.Video.is_live;
                         var vid = type switch {
-                            DownloadType.Video => Data.selectedVideo.format_id,
-                            DownloadType.Audio => Data.selectedAudio.format_id,
-                            _ => $"{Data.selectedVideo.format_id}+{Data.selectedAudio.format_id}"
+                            DownloadType.Video => Data.FormatSelection.selectedVideo.format_id,
+                            DownloadType.Audio => Data.FormatSelection.selectedAudio.format_id,
+                            _ => $"{Data.FormatSelection.selectedVideo.format_id}+{Data.FormatSelection.selectedAudio.format_id}"
                         };
                         dlp
                         .Temp(GetTempPath)
@@ -485,15 +485,15 @@ namespace YtDlpGui.WPF.Views {
                         .UseAria2(Data.UseAria2)
                         .LimitRate(Data.LimitRate)
                         .DownloadSections(Data.TimeRange)
-                        .SplitChapters(Data.selectedChapter, Data.OutputPath.TargetFile);
+                        .SplitChapters(Data.FormatSelection.selectedChapter, Data.OutputPath.TargetFile);
 
                         switch (type) {
                             case DownloadType.Video:
                                 dlp
                                 .EmbedChapters(Data.EmbedChapters)
                                 .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
-                                .Subtitle(Data.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
-                                .DownloadVideo(vid, Data.selectedVideo.video_ext, target);
+                                .Subtitle(Data.FormatSelection.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
+                                .DownloadVideo(vid, Data.FormatSelection.selectedVideo.video_ext, target);
                                 break;
                             case DownloadType.Audio:
                                 dlp
@@ -502,13 +502,13 @@ namespace YtDlpGui.WPF.Views {
                                 .DownloadAudio(vid, target);
                                 break;
                             case DownloadType.Subtitle:
-                                dlp.DownloadSubtitle(Data.selectedSub.key, target);
+                                dlp.DownloadSubtitle(Data.FormatSelection.selectedSub.key, target);
                                 break;
                             default:
                                 dlp
                                 .EmbedChapters(Data.EmbedChapters)
                                 .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
-                                .Subtitle(Data.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
+                                .Subtitle(Data.FormatSelection.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
                                 .DownloadFormat(vid, Data.OutputPath.TargetFile, Data.OriginExt);
                                 break;
                         }
@@ -594,10 +594,10 @@ namespace YtDlpGui.WPF.Views {
                 dialog.InitialDirectory = Path.GetDirectoryName(Data.OutputPath.TargetFile);
                 dialog.FileName = Path.GetFileName(Data.OutputPath.TargetFile);
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                    Data.RemuxVideo = true;
+                    Data.FormatSelection.RemuxVideo = true;
                     Data.OutputPath.TargetPath = Path.GetDirectoryName(dialog.FileName);
                     Data.OutputPath.TargetName = Path.GetFileName(dialog.FileName);
-                    Data.RemuxVideo = false;
+                    Data.FormatSelection.RemuxVideo = false;
                     /*
                     if ((new string[] { ".mp4", ".webm", ".3gp", ".mkv" }).Any(x => Path.GetExtension(dialog.FileName).ToLower() == x)) {
                         Data.OutputPath.TargetName = Path.GetFileName(dialog.FileName);
@@ -650,7 +650,7 @@ namespace YtDlpGui.WPF.Views {
             var dialog = new SaveFileDialog();
             dialog.InitialDirectory = Path.GetDirectoryName(Data.OutputPath.TargetFile);
             //dialog.Filter = "SubRip | *.srt";
-            //dialog.DefaultExt = Data.selectedSub.key + ".srt";
+            //dialog.DefaultExt = Data.FormatSelection.selectedSub.key + ".srt";
             dialog.DefaultExt = ".srt";
             dialog.Filter =
                 $"{App.Lang.Files.srt}|*.srt|" +
@@ -662,13 +662,13 @@ namespace YtDlpGui.WPF.Views {
                 $"{App.Lang.Files.srv2}|*.srv2|" +
                 $"{App.Lang.Files.srv1}|*.srv1|" +
                 $"{App.Lang.Files.json3}|*.json3";
-            //dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), Data.selectedSub.key + ".srt");
+            //dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), Data.FormatSelection.selectedSub.key + ".srt");
             dialog.FileName = Path.ChangeExtension(Data.OutputPath.TargetFile, null);
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var target = dialog.FileName;
                 Debug.WriteLine(dialog.FileName, "DIALOG");
                 //var target = Path.ChangeExtension(dialog.FileName, ".srt");
-                //FFMPEG.DownloadUrl(Data.selectedSub.url, target);
+                //FFMPEG.DownloadUrl(Data.FormatSelection.selectedSub.url, target);
                 Download_Start_Native(DownloadType.Subtitle, target);
             }
         }

@@ -68,34 +68,31 @@ namespace YtDlpGui.WPF.Views {
                         Debug.WriteLine(f, "config file");
                         GUIConfig.ConfigurationFile = f;
 
-                        UseFormat = true;
+                        FormatSelection.UseFormat = true;
                         UseOutput = true;
 
                         if (File.Exists(f)) {
                             foreach (var line in File.ReadLines(f)) {
                                 if (string.IsNullOrWhiteSpace(line) || _isComment.IsMatch(line)) continue;
-                                if (_hasFormat.IsMatch(line)) UseFormat = false;
+                                if (_hasFormat.IsMatch(line)) FormatSelection.UseFormat = false;
                                 if (_hasOutput.IsMatch(line)) UseOutput = false;
                             }
                         }
 
                         break;
-                    case nameof(selectedVideo):
+                    case nameof(FormatSelection):
                         // Update package connection
-                        if (selectedVideo != null && selectedAudio != null) {
-                            if (selectedVideo.type == FormatType.package) {
+                        if (FormatSelection.selectedVideo != null && FormatSelection.selectedAudio != null) {
+                            if (FormatSelection.selectedVideo.type == FormatType.package) {
                                 IsPackage = true;
-                                selectedAudio = selectedVideo;
+                                FormatSelection.selectedAudio = FormatSelection.selectedVideo;
                             } else {
                                 IsPackage = false;
-                                if (selectedAudio.type == FormatType.package) {
-                                    selectedAudio = FormatsAudio.FirstOrDefault(x => x.type != FormatType.package);
+                                if (FormatSelection.selectedAudio.type == FormatType.package) {
+                                    FormatSelection.selectedAudio = FormatsAudio.FirstOrDefault(x => x.type != FormatType.package);
                                 }
                             }
                         }
-                        CheckExtension();
-                        break;
-                    case nameof(selectedAudio):
                         CheckExtension();
                         UpdateOutputPath();
                         break;
@@ -123,48 +120,33 @@ namespace YtDlpGui.WPF.Views {
                 }
             }
             public void SelectFormatBest() {
-                selectedChapter = Chapters.FirstOrDefault();
+                FormatSelection.selectedChapter = Chapters.FirstOrDefault();
                 var defVideoFmt = FormatsVideo.FirstOrDefault();
                 var defAudioFmt = FormatsAudio.FirstOrDefault();
-                if (UseFormat) {
-                    selectedVideo = defVideoFmt;
-                    selectedAudio = defAudioFmt;
+                if (FormatSelection.UseFormat) {
+                    FormatSelection.selectedVideo = defVideoFmt;
+                    FormatSelection.selectedAudio = defAudioFmt;
                 } else {
-                    selectedVideo = FormatsVideo.FirstOrDefault(x => RequestedFormats.Any(r => r.format_id == x.format_id), defVideoFmt);
-                    selectedAudio = FormatsAudio.FirstOrDefault(x => RequestedFormats.Any(r => r.format_id == x.format_id), defAudioFmt);
+                    FormatSelection.selectedVideo = FormatsVideo.FirstOrDefault(x => RequestedFormats.Any(r => r.format_id == x.format_id), defVideoFmt);
+                    FormatSelection.selectedAudio = FormatsAudio.FirstOrDefault(x => RequestedFormats.Any(r => r.format_id == x.format_id), defAudioFmt);
                 }
-                selectedSub = Subtitles.FirstOrDefault();
+                FormatSelection.selectedSub = Subtitles.FirstOrDefault();
             }
             public void CheckExtension() {
-                if (RemuxVideo) return;
+                if (FormatSelection.RemuxVideo) return;
                 if (!string.IsNullOrWhiteSpace(OutputPath.TargetName)) {
-                    if (selectedVideo != null && selectedAudio != null) {
-                        OutputPath.TargetName = Path.ChangeExtension(OutputPath.TargetName, OriginExt);
+                    if (FormatSelection.selectedVideo != null && FormatSelection.selectedAudio != null) {
+                        OutputPath.TargetName = Path.ChangeExtension(OutputPath.TargetName, FormatSelection.GetOriginExtension());
                     }
                 }
                 UpdateOutputPath();
             }
-            public string OriginExt {
-                get {
-                    if (selectedVideo != null && selectedAudio != null) {
-                        if (selectedVideo.type == FormatType.package) {
-                            return selectedVideo.video_ext.ToLower().Trim('.');
-                        } else if (selectedVideo.video_ext == "webm" && selectedAudio.audio_ext == "webm") {
-                            return "webm";
-                        } else if (selectedVideo.video_ext == "mp4" && selectedAudio.audio_ext == "m4a") {
-                            return "mp4";
-                        }
-                    }
-                    return "mkv";
-                }
-            }
+            public string OriginExt => FormatSelection.GetOriginExtension();
             public Lang Lang { get; set; } = new();
             public Video? Video { get; set; } = new();
             public ConcurrentObservableCollection<Config> Configs { get; set; } = new();
             public IEnumerable<Config> ConfigsView => Configs.CollectionView;
             public Config selectedConfig { get; set; } = new();
-            public bool RemuxVideo { get; set; } = false;
-            public bool UseFormat { get; set; } = true;
             public bool UseOutput { get; set; } = true;
             public ConcurrentObservableCollection<Chapters> Chapters { get; set; } = new();
             public IEnumerable<Chapters> ChaptersView => Chapters.CollectionView;
@@ -179,11 +161,10 @@ namespace YtDlpGui.WPF.Views {
             public IEnumerable<Subs> SubtitlesView => Subtitles.CollectionView;
             public bool hasChapter { get; set; } = false;
             public bool hasSubtitle { get; set; } = false;
-            public Chapters? selectedChapter { get; set; } = null;
-            public Format selectedVideo { get; set; } = new();
-            public Format selectedAudio { get; set; } = new();
-            public Subs selectedSub { get; set; } = new();
             public bool IsAnalyze { get; set; } = false;
+            
+            // Format selection - extracted to FormatSelectionViewModel
+            public FormatSelectionViewModel FormatSelection { get; set; } = new();
             
             // Download progress - extracted to DownloadProgressViewModel
             public DownloadProgressViewModel DownloadProgress { get; set; } = new();
@@ -295,34 +276,32 @@ namespace YtDlpGui.WPF.Views {
                     Enable.FormatAudio = false;
                     Enable.SaveAudio = false;
                 }
-                if (selectedVideo == null || selectedAudio == null) {
+                if (FormatSelection.selectedVideo == null || FormatSelection.selectedAudio == null) {
                     Enable.Download = false;
                     Enable.SaveVideo = false;
                     Enable.SaveAudio = false;
                 } else {
-                    if (string.IsNullOrWhiteSpace(selectedVideo.format_id)) {
+                    if (string.IsNullOrWhiteSpace(FormatSelection.selectedVideo.format_id)) {
                         Enable.Download = false;
                         Enable.SaveVideo = false;
                     }
-                    if (string.IsNullOrWhiteSpace(selectedAudio.format_id)) {
+                    if (string.IsNullOrWhiteSpace(FormatSelection.selectedAudio.format_id)) {
                         Enable.Download = false;
                         Enable.SaveAudio = false;
                     }
-                    if (selectedVideo.type == FormatType.package) Enable.FormatAudio = false;
+                    if (FormatSelection.selectedVideo.type == FormatType.package) Enable.FormatAudio = false;
                 }
                 if (Subtitles.Count <= 1) {
                     Enable.SelectSubtitle = false;
                     Enable.SaveSubtitle = false;
                 } else {
-                    if (string.IsNullOrWhiteSpace(selectedSub?.url)) {
+                    if (string.IsNullOrWhiteSpace(FormatSelection.selectedSub?.url)) {
                         Enable.SaveSubtitle = false;
                     }
                 }
                 if (Video.is_live == true) {
-                    //ExecText = DownloadProgress.IsDownload ? "Stop" : "Record";
                     ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Stop : App.Lang.Main.Record;
                 } else {
-                    //ExecText = DownloadProgress.IsDownload ? "Cancel" : "Download";
                     ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Cancel : App.Lang.Main.Download;
                 }
             }
@@ -411,11 +390,11 @@ namespace YtDlpGui.WPF.Views {
             public void GetStatus(string std) {
                 if (regPart.IsMatch(std)) {
                     var r = Util.GetGroup(regPart, std);
-                    if (r.GetValueOrDefault("fid", "0") == Data.selectedVideo.format_id) {
+                    if (r.GetValueOrDefault("fid", "0") == Data.FormatSelection.selectedVideo.format_id) {
                         type = 1;
                         s = Data.DownloadProgress.DNStatus_Video;
                     }
-                    if (r.GetValueOrDefault("fid", "0") == Data.selectedAudio.format_id) {
+                    if (r.GetValueOrDefault("fid", "0") == Data.FormatSelection.selectedAudio.format_id) {
                         type = 2;
                         s = Data.DownloadProgress.DNStatus_Audio; ;
                     }
