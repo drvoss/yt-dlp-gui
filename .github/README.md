@@ -27,12 +27,12 @@ This fork aims to:
 | Aspect | Original | This Fork |
 |--------|----------|-----------|
 | .NET Version | 6.0 (EOL Nov 2024) | 8.0 (LTS until Nov 2026) |
-| Architecture | Monolithic ViewData | Multiple focused ViewModels |
-| Testing | None (0%) | xUnit + Moq (60%+ target) |
-| DI Container | None | Microsoft.Extensions.DependencyInjection |
-| CI/CD | None | GitHub Actions |
-| Code-behind | 600+ LOC | Minimal (Command pattern) |
-| Package Management | Traditional | Central Package Management |
+| Architecture | Monolithic ViewData (86 props) | 10 focused ViewModels (31 props, 64% reduction) |
+| Testing | None (0%) | xUnit + Moq (60%+ target, planned) |
+| DI Container | None | Microsoft.Extensions.DependencyInjection (planned) |
+| CI/CD | None | GitHub Actions ✅ |
+| Code-behind | 600+ LOC | Refactoring in progress |
+| Package Management | Traditional | Central Package Management ✅ |
 
 ---
 
@@ -62,6 +62,7 @@ This fork aims to:
 * 📁 **Organized Structure**: 4-layer architecture (Core, Services, ViewModels, WPF)
 * 📦 **Central Package Management**: Single source of truth for all dependencies
 * 🔄 **CI/CD Pipeline**: Automated builds with GitHub Actions
+* 🧩 **Focused ViewModels**: 10 single-responsibility ViewModels extracted from God Object (64% reduction!)
 * 🔧 **Better Maintainability**: 58 files reorganized for easier testing and development
 
 ---
@@ -83,7 +84,7 @@ This fork aims to:
 - [x] Update NuGet packages
 - [x] PR submitted to original project (#175)
 
-### Phase 2: Architecture Modernization (🚧 In Progress - Phase 2-1 Complete)
+### Phase 2: Architecture Modernization (🚧 In Progress - Phase 2-2 Week 3)
 
 #### Phase 2-1: Project Modernization (✅ Complete - 2026-02-16)
 - [x] **Migrate to .NET 8.0** - Upgraded from .NET 6.0 to .NET 8.0 LTS with C# 12 support
@@ -95,8 +96,18 @@ This fork aims to:
 - [x] **Central Package Management** - Directory.Packages.props for centralized version control
 - [x] **GitHub Actions CI/CD** - Automated build pipeline on Windows runner
 
-#### Phase 2-2: Architecture Refactoring (📅 Planned)
-- [ ] Extract ViewData into focused ViewModels
+#### Phase 2-2: Architecture Refactoring (🚧 In Progress - 64% Complete)
+- [x] **Extract ViewData into focused ViewModels** - 10 ViewModels created
+  - ✅ UpdateViewModel (5 properties) - Update check functionality
+  - ✅ WindowStateViewModel (8 properties) - Window position, size, scale
+  - ✅ NetworkSettingsViewModel (2 properties) - Proxy configuration
+  - ✅ DownloadProgressViewModel (11 properties) - Download status tracking
+  - ✅ OutputPathViewModel (5 properties) - File path management
+  - ✅ FormatSelectionViewModel (6 properties) - Video/audio format selection
+  - ✅ DownloadOptionsViewModel (10 properties) - Download settings
+  - ✅ CookieSettingsViewModel (3 properties) - Cookie management
+  - ✅ PathsViewModel (5 properties) - External tool paths
+  - **Result**: ViewData reduced from 86 → 31 properties (**64% reduction!** 🎉)
 - [ ] Create service interfaces (IDownloadService, IFormatService, etc.)
 - [ ] Introduce dependency injection container
 - [ ] Remove code-behind logic with Command pattern
