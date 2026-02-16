@@ -1,4 +1,4 @@
-﻿using Swordfish.NET.Collections;
+using Swordfish.NET.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -49,10 +49,10 @@ namespace YtDlpGui.WPF.Views {
                             break;
                     }
                 };
-                DNStatus_Infos.PropertyChanged += (s, e) => {
+                DownloadProgress.DNStatus_Infos.PropertyChanged += (s, e) => {
                     switch (e.PropertyName) {
                         case nameof(ConcurrentObservableDictionary<string, string>.CollectionView):
-                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DNStatus_InfosView)));
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DownloadProgress.DNStatus_InfosView)));
                             break;
                     }
                 };
@@ -188,7 +188,10 @@ namespace YtDlpGui.WPF.Views {
             public Format selectedAudio { get; set; } = new();
             public Subs selectedSub { get; set; } = new();
             public bool IsAnalyze { get; set; } = false;
-            public bool IsDownload { get; set; } = false;
+            
+            // Download progress - extracted to DownloadProgressViewModel
+            public DownloadProgressViewModel DownloadProgress { get; set; } = new();
+            
             public bool IsAbouted { get; set; } = false;
             public bool IsMonitor { get; set; } = false;
             public bool AlwaysOnTop { get; set; } = false;
@@ -200,15 +203,9 @@ namespace YtDlpGui.WPF.Views {
             // Network settings - extracted to NetworkSettingsViewModel
             public NetworkSettingsViewModel Network { get; set; } = new();
             
-            public bool CanCancel { get; set; } = false;
             public string Url { get; set; } = string.Empty;
             public string CommandLine { get; set; } = string.Empty;
             public bool IsPackage { get; set; } = false;
-            public decimal VideoPersent { get; set; } = 0;
-            public string VideoETA { get; set; } = "0:00";
-            public decimal AudioPersent { get; set; } = 0;
-            public string AudioETA { get; set; } = "0:00";
-            public decimal SubtitlePersent { get; set; } = 0;
             public string TargetPath { get; set; } = string.Empty;
             public string TargetName { get; set; } = string.Empty;
             public string TargetFile { get; set; } = string.Empty;
@@ -241,13 +238,6 @@ namespace YtDlpGui.WPF.Views {
             public string PathTEMP { get; set; } = string.Empty;
             public string PathNotify { get; set; } = string.Empty;
             public GUIConfig GUIConfig { get; set; } = new();
-            //status
-            public DownloadStatus DNStatus_Video { get; set; } = new();
-            public DownloadStatus DNStatus_Audio { get; set; } = new();
-            //public Dictionary<string, string> DNStatus_Infos { get; set; } = new();
-            public ConcurrentObservableDictionary<string, string> DNStatus_Infos { get; set; } = new();
-            public IEnumerable<KeyValuePair<string, string>> DNStatus_InfosView
-                => DNStatus_Infos.CollectionView;
             public string ClipboardText { get; set; } = string.Empty;
             //
             private void CheckEnable() {
@@ -285,7 +275,7 @@ namespace YtDlpGui.WPF.Views {
                     Enable.SaveAudio = false;
                     Enable.SaveSubtitle = false;
                 }
-                if (IsDownload) {
+                if (DownloadProgress.IsDownload) {
                     Enable.Url = false;
                     Enable.Analyze = false;
                     Enable.SelectChapters = false;
@@ -335,11 +325,11 @@ namespace YtDlpGui.WPF.Views {
                     }
                 }
                 if (Video.is_live == true) {
-                    //ExecText = IsDownload ? "Stop" : "Record";
-                    ExecText = IsDownload ? App.Lang.Main.Stop : App.Lang.Main.Record;
+                    //ExecText = DownloadProgress.IsDownload ? "Stop" : "Record";
+                    ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Stop : App.Lang.Main.Record;
                 } else {
-                    //ExecText = IsDownload ? "Cancel" : "Download";
-                    ExecText = IsDownload ? App.Lang.Main.Cancel : App.Lang.Main.Download;
+                    //ExecText = DownloadProgress.IsDownload ? "Cancel" : "Download";
+                    ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Cancel : App.Lang.Main.Download;
                 }
             }
         }
@@ -410,13 +400,6 @@ namespace YtDlpGui.WPF.Views {
             [YamlMember(Order = 1404)] public bool AutoDownloadAnalysed { get; set; } = false;
             //[Description("Embed Subtitles")] public bool EmbedSub { get; set; } = false;
         }
-        public class DownloadStatus {
-            public decimal Persent { get; set; } = 0;
-            public decimal Downloaded { get; set; } = 0;
-            public decimal Total { get; set; } = 0;
-            public decimal Speed { get; set; } = 0;
-            public decimal Elapsed { get; set; } = 0;
-        }
         public class StatusRepoter {
             public int type = 0;
             private static Regex regPart = new Regex(@"\[download\] Destination:.*\.f(?<fid>\d+(?:-\w+)?)\.\w+");
@@ -429,24 +412,24 @@ namespace YtDlpGui.WPF.Views {
             private DownloadStatus s { get; set; }
             public StatusRepoter(ViewData data) {
                 Data = data;
-                s = Data.DNStatus_Video;
+                s = Data.DownloadProgress.DNStatus_Video;
             }
             public void GetStatus(string std) {
                 if (regPart.IsMatch(std)) {
                     var r = Util.GetGroup(regPart, std);
                     if (r.GetValueOrDefault("fid", "0") == Data.selectedVideo.format_id) {
                         type = 1;
-                        s = Data.DNStatus_Video;
+                        s = Data.DownloadProgress.DNStatus_Video;
                     }
                     if (r.GetValueOrDefault("fid", "0") == Data.selectedAudio.format_id) {
                         type = 2;
-                        s = Data.DNStatus_Audio; ;
+                        s = Data.DownloadProgress.DNStatus_Audio; ;
                     }
                 }
                 if (s != null) {
                     if (regDLP.IsMatch(std)) {
                         // yt-dlp
-                        if (!Data.DNStatus_Infos.ContainsKey("Downloader")) Data.DNStatus_Infos["Downloader"] = App.Lang.Status.Native;
+                        if (!Data.DownloadProgress.DNStatus_Infos.ContainsKey("Downloader")) Data.DownloadProgress.DNStatus_Infos["Downloader"] = App.Lang.Status.Native;
                         var d = std.Split(',');
                         if (decimal.TryParse(d[4], out decimal d_total)) {
                             s.Total = d_total;
@@ -462,60 +445,60 @@ namespace YtDlpGui.WPF.Views {
 
                         UpdatePersent(s.Persent);
 
-                        if (Data.DNStatus_Infos.ContainsKey("Downloader") && Data.DNStatus_Infos["Downloader"] == App.Lang.Status.Native) {
-                            Data.DNStatus_Infos["Downloaded"] = Util.GetAutoUnit((long)Data.DNStatus_Video.Downloaded + (long)Data.DNStatus_Audio.Downloaded);
-                            Data.DNStatus_Infos["Total"] = Util.GetAutoUnit((long)Data.DNStatus_Video.Total + (long)Data.DNStatus_Audio.Total);
-                            Data.DNStatus_Infos["Speed"] = Util.GetAutoUnit((long)Data.DNStatus_Video.Speed + (long)Data.DNStatus_Audio.Speed);
-                            Data.DNStatus_Infos["Elapsed"] = Util.SecToStr(Data.DNStatus_Video.Elapsed + Data.DNStatus_Audio.Elapsed);
-                            Data.DNStatus_Infos["Status"] = App.Lang.Status.Downloading;
+                        if (Data.DownloadProgress.DNStatus_Infos.ContainsKey("Downloader") && Data.DownloadProgress.DNStatus_Infos["Downloader"] == App.Lang.Status.Native) {
+                            Data.DownloadProgress.DNStatus_Infos["Downloaded"] = Util.GetAutoUnit((long)Data.DownloadProgress.DNStatus_Video.Downloaded + (long)Data.DownloadProgress.DNStatus_Audio.Downloaded);
+                            Data.DownloadProgress.DNStatus_Infos["Total"] = Util.GetAutoUnit((long)Data.DownloadProgress.DNStatus_Video.Total + (long)Data.DownloadProgress.DNStatus_Audio.Total);
+                            Data.DownloadProgress.DNStatus_Infos["Speed"] = Util.GetAutoUnit((long)Data.DownloadProgress.DNStatus_Video.Speed + (long)Data.DownloadProgress.DNStatus_Audio.Speed);
+                            Data.DownloadProgress.DNStatus_Infos["Elapsed"] = Util.SecToStr(Data.DownloadProgress.DNStatus_Video.Elapsed + Data.DownloadProgress.DNStatus_Audio.Elapsed);
+                            Data.DownloadProgress.DNStatus_Infos["Status"] = App.Lang.Status.Downloading;
                         }
                     } else if (regAria.IsMatch(std)) {
                         // aria2
-                        Data.DNStatus_Infos["Downloader"] = "aria2c";
+                        Data.DownloadProgress.DNStatus_Infos["Downloader"] = "aria2c";
                         var d = Util.GetGroup(regAria, std);
                         if (decimal.TryParse(d["persent"], out decimal o_persent)) {
                             UpdatePersent(o_persent);
                         }
-                        Data.DNStatus_Infos["Downloaded"] = d["downloaded"];
-                        Data.DNStatus_Infos["Total"] = d["total"];
-                        Data.DNStatus_Infos["Speed"] = d["speed"];
-                        Data.DNStatus_Infos["Elapsed"] = d.GetValueOrDefault("eta", "0s");
-                        Data.DNStatus_Infos["Connections"] = d["cn"];
-                        Data.DNStatus_Infos["Status"] = App.Lang.Status.Downloading;
+                        Data.DownloadProgress.DNStatus_Infos["Downloaded"] = d["downloaded"];
+                        Data.DownloadProgress.DNStatus_Infos["Total"] = d["total"];
+                        Data.DownloadProgress.DNStatus_Infos["Speed"] = d["speed"];
+                        Data.DownloadProgress.DNStatus_Infos["Elapsed"] = d.GetValueOrDefault("eta", "0s");
+                        Data.DownloadProgress.DNStatus_Infos["Connections"] = d["cn"];
+                        Data.DownloadProgress.DNStatus_Infos["Status"] = App.Lang.Status.Downloading;
                     } else if (regFF.IsMatch(std)) {
                         // ffmpeg
-                        Data.DNStatus_Infos["Downloader"] = "FFMPEG";
+                        Data.DownloadProgress.DNStatus_Infos["Downloader"] = "FFMPEG";
                         var d = Util.GetGroup(regFF, std);
-                        Data.DNStatus_Infos["Downloaded"] = d.GetValueOrDefault("size", "");
-                        Data.DNStatus_Infos["Speed"] = d.GetValueOrDefault("bitrate", "");
-                        Data.DNStatus_Infos["Frame"] = d.GetValueOrDefault("frame", "");
-                        Data.DNStatus_Infos["FPS"] = d.GetValueOrDefault("fps", "");
-                        Data.DNStatus_Infos["Time"] = d.GetValueOrDefault("time", "");
-                        Data.DNStatus_Infos["Status"] = "Downloading";
+                        Data.DownloadProgress.DNStatus_Infos["Downloaded"] = d.GetValueOrDefault("size", "");
+                        Data.DownloadProgress.DNStatus_Infos["Speed"] = d.GetValueOrDefault("bitrate", "");
+                        Data.DownloadProgress.DNStatus_Infos["Frame"] = d.GetValueOrDefault("frame", "");
+                        Data.DownloadProgress.DNStatus_Infos["FPS"] = d.GetValueOrDefault("fps", "");
+                        Data.DownloadProgress.DNStatus_Infos["Time"] = d.GetValueOrDefault("time", "");
+                        Data.DownloadProgress.DNStatus_Infos["Status"] = "Downloading";
                     } else if (regYTDL.IsMatch(std)) {
                         // youtube-dl
-                        if (!Data.DNStatus_Infos.ContainsKey("Downloader")) Data.DNStatus_Infos["Downloader"] = "youtube-dl";
+                        if (!Data.DownloadProgress.DNStatus_Infos.ContainsKey("Downloader")) Data.DownloadProgress.DNStatus_Infos["Downloader"] = "youtube-dl";
                         var d = Util.GetGroup(regYTDL, std);
                         if (decimal.TryParse(d["persent"], out decimal o_persent)) {
                             UpdatePersent(o_persent);
                         }
-                        Data.DNStatus_Infos["Total"] = d.GetValueOrDefault("total", "");
-                        Data.DNStatus_Infos["Speed"] = d.GetValueOrDefault("speed", "");
-                        Data.DNStatus_Infos["Elapsed"] = d.GetValueOrDefault("eta", "");
-                        Data.DNStatus_Infos["Status"] = "Downloading";
+                        Data.DownloadProgress.DNStatus_Infos["Total"] = d.GetValueOrDefault("total", "");
+                        Data.DownloadProgress.DNStatus_Infos["Speed"] = d.GetValueOrDefault("speed", "");
+                        Data.DownloadProgress.DNStatus_Infos["Elapsed"] = d.GetValueOrDefault("eta", "");
+                        Data.DownloadProgress.DNStatus_Infos["Status"] = "Downloading";
                     }
                 }
             }
             private void UpdatePersent(decimal persent) {
                 switch (type) {
                     case 0:
-                        Data.VideoPersent = Data.AudioPersent = persent;
+                        Data.DownloadProgress.VideoPersent = Data.DownloadProgress.AudioPersent = persent;
                         break;
                     case 1:
-                        Data.VideoPersent = persent;
+                        Data.DownloadProgress.VideoPersent = persent;
                         break;
                     case 2:
-                        Data.AudioPersent = persent;
+                        Data.DownloadProgress.AudioPersent = persent;
                         break;
                 }
             }

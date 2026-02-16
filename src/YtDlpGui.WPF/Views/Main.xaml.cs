@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Toolkit.Uwp.Notifications;
 using Newtonsoft.Json;
 using Swordfish.NET.Collections.Auxiliary;
 using System;
@@ -160,7 +160,7 @@ namespace YtDlpGui.WPF.Views {
 
             var sc = new SharpClipboard();
             sc.ClipboardChanged += (s, e) => {
-                if (!Data.IsMonitor || Data.IsAnalyze || Data.IsDownload) return;
+                if (!Data.IsMonitor || Data.IsAnalyze || Data.DownloadProgress.IsDownload) return;
                 if (e.ContentType == SharpClipboard.ContentTypes.Text) {
                     Data.ClipboardText = GetClipbaordText();
                 }
@@ -384,10 +384,10 @@ namespace YtDlpGui.WPF.Views {
             });
         }
         private void ClearStatus() {
-            Data.DNStatus_Infos.Clear();
-            Data.DNStatus_Video = new();
-            Data.DNStatus_Audio = new();
-            Data.VideoPersent = Data.AudioPersent = 0;
+            Data.DownloadProgress.DNStatus_Infos.Clear();
+            Data.DownloadProgress.DNStatus_Video = new();
+            Data.DownloadProgress.DNStatus_Audio = new();
+            Data.DownloadProgress.VideoPersent = Data.DownloadProgress.AudioPersent = 0;
         }
         private void Button_SaveVideo(object sender, RoutedEventArgs e) {
             //SaveStream(0);
@@ -428,7 +428,7 @@ namespace YtDlpGui.WPF.Views {
             Util.Explorer(Data.TargetFile);
         }
         private void Button_Cancel(object sender, RoutedEventArgs e) {
-            if (Data.IsDownload) {
+            if (Data.DownloadProgress.IsDownload) {
                 Data.IsAbouted = true;
                 foreach (var dlp in RunningDLP) {
                     dlp.Close();
@@ -441,9 +441,9 @@ namespace YtDlpGui.WPF.Views {
         }
         public enum DownloadType { Normal, Video, Audio, Thumbnail, Subtitle }
         private async void Download_Start_Native(DownloadType type = DownloadType.Normal, string target = "") {
-            Data.CanCancel = false;
+            Data.DownloadProgress.CanCancel = false;
             Data.IsAbouted = false;
-            if (Data.IsDownload) {
+            if (Data.DownloadProgress.IsDownload) {
                 Data.IsAbouted = true;
                 foreach (var dlp in RunningDLP) {
                     dlp.Close();
@@ -460,7 +460,7 @@ namespace YtDlpGui.WPF.Views {
                     overwrite = mb == System.Windows.Forms.DialogResult.Yes;
                     if (!overwrite) return; // Do not overwrite
                 }
-                Data.IsDownload = true;
+                Data.DownloadProgress.IsDownload = true;
 
                 // Reset progress to 0
                 ClearStatus();
@@ -523,10 +523,10 @@ namespace YtDlpGui.WPF.Views {
                         });
                     }));
                     //WaitAll Downloads, Merger Video and Audio
-                    Data.CanCancel = true;
+                    Data.DownloadProgress.CanCancel = true;
                     Task.WaitAll(tasks.ToArray());
                     if (!Data.IsAbouted) {
-                        Data.DNStatus_Infos["Status"] = App.Lang.Status.Done;
+                        Data.DownloadProgress.DNStatus_Infos["Status"] = App.Lang.Status.Done;
 
                         //post-process
                         Dictionary<string, string> files = new Dictionary<string, string>();
@@ -577,7 +577,7 @@ namespace YtDlpGui.WPF.Views {
                         } catch (Exception ex) { }
                     }
                     //Clear downloading status
-                    Data.IsDownload = false;
+                    Data.DownloadProgress.IsDownload = false;
                 });
             }
         }

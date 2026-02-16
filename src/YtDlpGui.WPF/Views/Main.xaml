@@ -213,7 +213,7 @@
                           HorizontalAlignment="Left"/>
                     </StackPanel>
                     <!-- Download Infomation -->
-                    <ItemsControl Grid.Row="2" VerticalAlignment="Bottom" Margin="4" ItemsSource="{Binding DNStatus_InfosView}">
+                    <ItemsControl Grid.Row="2" VerticalAlignment="Bottom" Margin="4" ItemsSource="{Binding DownloadProgress.DNStatus_InfosView}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel/>
@@ -391,13 +391,13 @@
                             </ComboBox.ItemTemplate>
                             <d:ComboBoxItem IsSelected="True">1920×1080 vp9 30fps 76.58MB</d:ComboBoxItem>
                         </ComboBox>
-                        <ProgressBar Grid.Column="1" Value="{Binding VideoPersent}" Margin="1,3" IsHitTestVisible="False"
+                        <ProgressBar Grid.Column="1" Value="{Binding DownloadProgress.VideoPersent}" Margin="1,3" IsHitTestVisible="False"
                                              BorderThickness="0" Background="Transparent" Foreground="#3000ff00">
                             <ProgressBar.Style>
                                 <Style TargetType="ProgressBar">
                                     <Setter Property="Visibility" Value="Hidden"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsDownload}" Value="True">
+                                        <DataTrigger Binding="{Binding DownloadProgress.IsDownload}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -475,13 +475,13 @@
                             </ComboBox.ItemTemplate>
                             <d:ComboBoxItem IsSelected="True">1920×1080 vp9 30fps 76.58MB</d:ComboBoxItem>
                         </ComboBox>
-                        <ProgressBar Grid.Column="1" Value="{Binding AudioPersent}" Margin="1,3" IsHitTestVisible="False"
+                        <ProgressBar Grid.Column="1" Value="{Binding DownloadProgress.AudioPersent}" Margin="1,3" IsHitTestVisible="False"
                                      BorderThickness="0" Background="Transparent" Foreground="#3000ff00">
                             <ProgressBar.Style>
                                 <Style TargetType="ProgressBar">
                                     <Setter Property="Visibility" Value="Hidden"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsDownload}" Value="True">
+                                        <DataTrigger Binding="{Binding DownloadProgress.IsDownload}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -515,13 +515,13 @@
                                   SelectedValue="{Binding selectedSub}" 
                                   DisplayMemberPath="name"
                                   ItemsSource="{Binding SubtitlesView}"/>
-                        <ProgressBar Grid.Column="1" Value="{Binding SubtitlePersent}" Margin="1,3" IsHitTestVisible="False"
+                        <ProgressBar Grid.Column="1" Value="{Binding DownloadProgress.SubtitlePersent}" Margin="1,3" IsHitTestVisible="False"
                                      BorderThickness="0" Background="Transparent" Foreground="#3000ff00">
                             <ProgressBar.Style>
                                 <Style TargetType="ProgressBar">
                                     <Setter Property="Visibility" Value="Hidden"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsDownload}" Value="True">
+                                        <DataTrigger Binding="{Binding DownloadProgress.IsDownload}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -558,11 +558,11 @@
                             <TextBlock Margin="2,0,0,0" Text="{Binding Source={x:Static app:App.Lang}, Path=Main.Browse}"/>
                         </Button>
                     </Grid>
-                    <Button Grid.Column="1" Margin="2" Cursor="Hand" IsEnabled="{Binding CanCancel}" Click="Button_Cancel">
+                    <Button Grid.Column="1" Margin="2" Cursor="Hand" IsEnabled="{Binding DownloadProgress.CanCancel}" Click="Button_Cancel">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDownload}" Value="False">
+                                    <DataTrigger Binding="{Binding DownloadProgress.IsDownload}" Value="False">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -577,14 +577,14 @@
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDownload}" Value="True">
+                                    <DataTrigger Binding="{Binding DownloadProgress.IsDownload}" Value="True">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
                         <StackPanel Orientation="Horizontal" Margin="4,0">
-                            <controls:Icons Size="14" Kind="Download" IsLoading="{Binding IsDownload}"/>
+                            <controls:Icons Size="14" Kind="Download" IsLoading="{Binding DownloadProgress.IsDownload}"/>
                             <TextBlock Margin="2,0,0,0" d:Text="Download" Text="{Binding ExecText}"/>
                         </StackPanel>
                     </Button>
