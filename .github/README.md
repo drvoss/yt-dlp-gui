@@ -60,6 +60,8 @@ This fork aims to:
 * 🏗️ **Clean Architecture**: Multi-project solution with proper separation of concerns
 * 🎯 **Modern Platform**: .NET 8.0 LTS with C# 12 features
 * 📁 **Organized Structure**: 4-layer architecture (Core, Services, ViewModels, WPF)
+* 📦 **Central Package Management**: Single source of truth for all dependencies
+* 🔄 **CI/CD Pipeline**: Automated builds with GitHub Actions
 * 🔧 **Better Maintainability**: 58 files reorganized for easier testing and development
 
 ---
@@ -81,22 +83,23 @@ This fork aims to:
 - [x] Update NuGet packages
 - [x] PR submitted to original project (#175)
 
-### Phase 2: Architecture Modernization (🚧 In Progress - 50% Complete)
+### Phase 2: Architecture Modernization (🚧 In Progress - Phase 2-1 Complete)
 
-#### Completed
+#### Phase 2-1: Project Modernization (✅ Complete - 2026-02-16)
 - [x] **Migrate to .NET 8.0** - Upgraded from .NET 6.0 to .NET 8.0 LTS with C# 12 support
 - [x] **Multi-Project Solution** - Restructured into 4 projects (Core, Services, ViewModels, WPF)
   - YtDlpGui.Core: Domain models and interfaces
   - YtDlpGui.Services: Business logic and service implementations
   - YtDlpGui.ViewModels: MVVM layer (prepared)
   - YtDlpGui.WPF: UI layer with Views, Controls, Themes
+- [x] **Central Package Management** - Directory.Packages.props for centralized version control
+- [x] **GitHub Actions CI/CD** - Automated build pipeline on Windows runner
 
-#### In Progress
-- [ ] Central Package Management (Directory.Packages.props)
-- [ ] GitHub Actions CI/CD pipeline
+#### Phase 2-2: Architecture Refactoring (📅 Planned)
 - [ ] Extract ViewData into focused ViewModels
 - [ ] Create service interfaces (IDownloadService, IFormatService, etc.)
 - [ ] Introduce dependency injection container
+- [ ] Remove code-behind logic with Command pattern
 
 ### Phase 3: Testing Infrastructure (📅 Planned)
 - [ ] Setup xUnit test projects for Core and Services
