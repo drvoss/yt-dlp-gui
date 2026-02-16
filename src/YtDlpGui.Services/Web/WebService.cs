@@ -21,7 +21,7 @@ namespace YtDlpGui.Services.Web {
             var ResponseUri = uri;
             var isRedirect = false;
             if (res.IsSuccessStatusCode) {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //註冊Encoding擴展支援
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // Register encoding extensions support
                 if (string.IsNullOrWhiteSpace(encoding)) {
                     body = await res.Content.ReadAsStringAsync();
                 } else {
@@ -58,7 +58,7 @@ namespace YtDlpGui.Services.Web {
             if (!string.IsNullOrEmpty(proxyUrl)) {
                 var proxyUri = new Uri(proxyUrl);
                 var proxy = new WebProxy(proxyUri);
-                // 解析代理伺服器 URL 中的帳號和密碼
+                // Parse username and password from proxy URL
                 if (!string.IsNullOrEmpty(proxyUri.UserInfo)) {
                     var userPass = proxyUri.UserInfo.Split(':');
                     var username = Uri.UnescapeDataString(userPass[0]);

@@ -13,7 +13,7 @@ using static YtDlpGui.WPF.Views.Main;
 
 namespace YtDlpGui.WPF.Views {
     /// <summary>
-    /// About.xaml 的互動邏輯
+    /// Interaction logic for About.xaml
     /// </summary>
     public partial class About :Window {
         private readonly AboutViewData Data = new();
@@ -31,7 +31,7 @@ namespace YtDlpGui.WPF.Views {
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e) {
             Hyperlink link = sender as Hyperlink;
-            // 激活的是当前默认的浏览器
+            // Activate the default browser
             var url = link.NavigateUri.AbsoluteUri;
             Debug.WriteLine(url);
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });

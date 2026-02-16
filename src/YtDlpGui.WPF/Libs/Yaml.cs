@@ -63,11 +63,11 @@ namespace YtDlpGui.WPF.Libs {
             } catch { };
         }
         public static void Load(this IYamlConfig obj, string path) {
-            MethodInfo mi = typeof(Yaml).GetMethod(nameof(Yaml.Open)); //方法
+            MethodInfo mi = typeof(Yaml).GetMethod(nameof(Yaml.Open)); // Method
             if (mi.IsGenericMethod) {
-                //泛型呼叫
+                // Generic call
                 var func = mi.MakeGenericMethod(new[] { obj.GetType() });
-                var data = func.Invoke(null, new[] { path }) as IYamlConfig; //参数
+                var data = func.Invoke(null, new[] { path }) as IYamlConfig; // Parameters
                 Util.PropertyCopy(data, obj);
                 obj._YAMLPATH = path;
             }

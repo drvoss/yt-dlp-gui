@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace YtDlpGui.WPF.Controls {
     /// <summary>
-    /// Menu.xaml 的互動邏輯
+    /// Interaction logic for Menu.xaml
     /// </summary>
     public partial class Menu : ContextMenu {
         public Menu() {

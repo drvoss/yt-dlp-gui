@@ -82,7 +82,7 @@ namespace YtDlpGui.WPF.Controls.Behaviors {
                 NumberPlus(e.Delta > 0 ? 1 : -1);
             }
         }
-        //輸入
+        // Input
         private void TextBoxNumber_PreviewKeyDown(object sender, KeyEventArgs e) {
             switch (e.Key) {
                 case Key.Enter:
@@ -102,25 +102,25 @@ namespace YtDlpGui.WPF.Controls.Behaviors {
             if (n >= MaxValue) n = MaxValue;
             Number = n;
         }
-        //取得焦點 - 滑鼠
+        // Get focus - mouse
         private void TextBoxNumber_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             if (!AssociatedObject.IsKeyboardFocusWithin) {
                 e.Handled = true;
                 AssociatedObject.Focus();
             }
         }
-        //取得焦點 - 鍵盤
+        // Get focus - keyboard
         private void TextBoxNumber_GotFocus(object sender, RoutedEventArgs e) {
             NumberToText();
             AssociatedObject.SelectAll();
         }
-        //失去焦點
+        // Lose focus
         private void TextBoxNumber_LostFocus(object sender, RoutedEventArgs e) {
             InputDone();
             NumberToText();
             AssociatedObject.Select(AssociatedObject.Text.Length, 0);
         }
-        //完成處理
+        // Complete processing
         private void InputDone() {
             decimal n = decimal.Zero;
             if (!string.IsNullOrWhiteSpace(AssociatedObject.Text)) {
@@ -130,19 +130,19 @@ namespace YtDlpGui.WPF.Controls.Behaviors {
             }
             Number = n;
         }
-        //驗證數字 - 貼上
+        // Validate number - paste
         private void TextBoxNumber_Pasting(object sender, DataObjectPastingEventArgs e) {
             if (e.DataObject.GetDataPresent(typeof(string))) {
                 var text = e.DataObject.GetData(typeof(string)) as string;
                 if (!IsVaild(text)) e.CancelCommand();
             }
         }
-        //驗證數字 - 輸入
+        // Validate number - input
         private void TextBoxNumber_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) {
             var full = AssociatedObject.Text + e.Text;
             e.Handled = !IsVaild(full);
         }
-        //驗證數字
+        // Validate number
         private static readonly Regex patten = new Regex(@"^[0-9]+\.?[0-9]*$");
         private bool IsVaild(string str) {
             return patten.IsMatch(str);

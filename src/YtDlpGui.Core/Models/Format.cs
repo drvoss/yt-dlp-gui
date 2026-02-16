@@ -34,7 +34,7 @@ namespace YtDlpGui.Core.Models {
         public int Compare(Format? x, Format? y) {
             if (x == null && y == null) return 0;
             var r = 0;
-            //比较 ABR
+            // Compare ABR (Audio Bit Rate)
             if (x.abr.HasValue && y.abr.HasValue) {
                 var max = Math.Max(x.abr.Value, y.abr.Value);
                 var min = Math.Min(x.abr.Value, y.abr.Value);
@@ -45,7 +45,7 @@ namespace YtDlpGui.Core.Models {
                     }
                 }
             }
-            //比较 ASR
+            // Compare ASR (Audio Sample Rate)
             if (x.asr.HasValue && y.asr.HasValue) {
                 return x.asr.Value > y.asr.Value ? -1 : 1;
             }
@@ -58,7 +58,7 @@ namespace YtDlpGui.Core.Models {
         public int Compare(Format? x, Format? y) {
             if (x == null && y == null) return 0;
             var r = 0;
-            //比较 resolution
+            // Compare resolution
             if (x.height.HasValue && y.height.HasValue) {
                 var xr = (x.width ?? 1) * x.height.Value;
                 var yr = (y.width ?? 1) * y.height.Value;
@@ -66,7 +66,7 @@ namespace YtDlpGui.Core.Models {
                     return xr > yr ? -1 : 1;
                 }
             }
-            //比较 vbr
+            // Compare VBR (Video Bit Rate)
             if (x.vbr.HasValue && y.vbr.HasValue) {
                 var max = Math.Max(x.vbr.Value, y.vbr.Value);
                 var min = Math.Min(x.vbr.Value, y.vbr.Value);
@@ -77,7 +77,7 @@ namespace YtDlpGui.Core.Models {
                     }
                 }
             }
-            //比较 格式
+            // Compare format preference
             var prefer = new List<string>() { "VP9", "AV1", "H.264" };
             var xf = prefer.IndexOf(x.vcodec);
             var yf = prefer.IndexOf(y.vcodec);
@@ -90,7 +90,7 @@ namespace YtDlpGui.Core.Models {
     public static class ExtensionFormat {
         public static void LoadFromVideo(this ConcurrentObservableCollection<Format> source, List<Format> from) { //, Video from
             foreach (var row in from) { //from.formats
-                //分类
+                // Classify format type
                 if (row.vcodec != "none" && row.acodec != "none") {
                     row.type = FormatType.package;
                     if (row.height.HasValue && row.width.HasValue) {

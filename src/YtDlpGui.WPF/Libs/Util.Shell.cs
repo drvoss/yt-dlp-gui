@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace YtDlpGui.WPF.Libs {
     public partial class Util {
-        /* 送出 Ctrl+C -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ */
+        /* Send Ctrl+C -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ */
         private enum CtrlTypes : uint {
             CTRL_C_EVENT = 0,
             CTRL_BREAK_EVENT,

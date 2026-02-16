@@ -26,14 +26,14 @@ namespace YtDlpGui.WPF.Libs {
         }
 
         public static string GetAutoUnit(long value, SizeUnit unit = SizeUnit.Auto, string suffix = "B") {
-            //負數處理
+            // Handle negative numbers
             (value, bool IsNegative) = value < 0
                 ? (-value, true)
                 : (value, false);
 
-            int decimalPlaces = 2; //小數點位數
-            int mag = 0; //級數
-            decimal adjustedSize = 0; //調整後的值
+            int decimalPlaces = 2; // Decimal places
+            int mag = 0; // Magnitude
+            decimal adjustedSize = 0; // Adjusted value
             if (value > 0) {
                 var isAuto = unit == SizeUnit.Auto;
                 mag = isAuto

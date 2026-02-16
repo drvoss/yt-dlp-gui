@@ -80,7 +80,7 @@ namespace YtDlpGui.WPF.Views {
 
                         break;
                     case nameof(selectedVideo):
-                        //更改package连接
+                        // Update package connection
                         if (selectedVideo != null && selectedAudio != null) {
                             if (selectedVideo.type == FormatType.package) {
                                 IsPackage = true;

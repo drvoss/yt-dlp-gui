@@ -10,7 +10,7 @@ using static YtDlpGui.WPF.App;
 
 namespace YtDlpGui.WPF.Controls {
     /// <summary>
-    /// Icons.xaml 的互動邏輯
+    /// Interaction logic for Icons.xaml
     /// </summary>
     public partial class Icons : UserControl {
         // Kind -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_

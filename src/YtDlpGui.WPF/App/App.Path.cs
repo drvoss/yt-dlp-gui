@@ -19,7 +19,7 @@ namespace YtDlpGui.WPF {
             //var folder = IoPath.GetDirectoryName(exe);
             //var name = IoPath.GetFileNameWithoutExtension(exe);
             List<string> parmas = new() { AppPath };
-            //新增預設
+            // Add default paths
             parmas.AddRange(type switch {
                 Folders.root => Array.Empty<string>(),
                 Folders.bin => new[] { "bin" },
@@ -27,7 +27,7 @@ namespace YtDlpGui.WPF {
                 Folders.temp => new[] { "temp" },
                 _ => throw new NotImplementedException(),
             });
-            //新增延伸
+            // Add extensions
             parmas.AddRange(pathpart);
             var res = "";
             try {

@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace YtDlpGui.WPF.Controls {
     /// <summary>
-    /// TextEditor.xaml 的互動邏輯
+    /// Interaction logic for TextEditor.xaml
     /// </summary>
     public partial class TextEditor : UserControl, ITextView {
         public static readonly DependencyProperty MultilineProperty = DependencyProperty.RegisterAttached(

@@ -14,7 +14,7 @@ using System.Xml;
 
 namespace YtDlpGui.WPF.Controls {
     /// <summary>
-    /// TextEditor.xaml 的互動邏輯
+    /// Interaction logic for TextView.xaml
     /// </summary>
     public partial class TextView : UserControl, ITextView {
         public static readonly DependencyProperty MultilineProperty = DependencyProperty.RegisterAttached(

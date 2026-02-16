@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace YtDlpGui.WPF.Views {
     /// <summary>
-    /// Release.xaml 的互動邏輯
+    /// Interaction logic for Release.xaml
     /// </summary>
     public partial class Release : Window {
         private readonly ReleaseData Data = new();

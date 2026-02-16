@@ -304,7 +304,7 @@ namespace YtDlpGui.WPF.Views {
             if (Data.UseOutput) dlp.Output("%(title)s.%(ext)s"); //if not used config, default template
             ClearStatus();
             dlp.Exec(null, std => {
-                //取得JSON
+                // Get JSON
                 Data.Video = JsonConvert.DeserializeObject<Video>(std, new JsonSerializerSettings() {
                     NullValueHandling = NullValueHandling.Ignore
                 });
@@ -323,14 +323,14 @@ namespace YtDlpGui.WPF.Views {
                     }
                     //Data.selectedChapter = Data.Chapters.First();
                 }
-                //读取 Formats 与 Thumbnails
+                // Read Formats and Thumbnails
                 {
                     //Debug.WriteLine(JsonConvert.SerializeObject(Data.Video.chapters, Formatting.Indented));
                     Data.Formats.LoadFromVideo(Data.Video.formats);
                     Data.Thumbnails.Reset(Data.Video.thumbnails);
                     Data.RequestedFormats.LoadFromVideo(Data.Video.requested_formats);
                 }
-                //读取 Subtitles
+                // Read Subtitles
                 {
                     var subs = Data.Video.subtitles.Select(x => {
                         var s = x.Value.FirstOrDefault(y => y.ext == "vtt");
@@ -362,8 +362,8 @@ namespace YtDlpGui.WPF.Views {
                 } else {
                     full = Path.Combine(Data.TargetPath, Data.Video._filename);
                 }
-                //Data.TargetName = GetValidFileName(Data.Video.title) + ".tmp"; //预设挡案名称
-                Data.TargetName = full; //预设挡案名称
+                //Data.TargetName = GetValidFileName(Data.Video.title) + ".tmp"; // Default filename
+                Data.TargetName = full; // Default filename
 
             });
             dlp.Err(DLP.DLPError.Sign, () => {
@@ -451,18 +451,18 @@ namespace YtDlpGui.WPF.Views {
             } else {
                 var overwrite = true;
                 RunningDLP.Clear();
-                //如果檔案已存在
+                // Check if file already exists
                 if (File.Exists(Data.TargetFile) && type == DownloadType.Normal) {
                     var mb = System.Windows.Forms.MessageBox.Show(
                         $"{App.Lang.Dialog.FileExist}\n",
                         $"{App.AppName}",
                         MessageBoxButtons.YesNo);
                     overwrite = mb == System.Windows.Forms.DialogResult.Yes;
-                    if (!overwrite) return; //不要复写
+                    if (!overwrite) return; // Do not overwrite
                 }
                 Data.IsDownload = true;
 
-                //進度更新為0
+                // Reset progress to 0
                 ClearStatus();
                 _ = Task.Run(() => {
                     var dlp = new DLP(Data.Url);
@@ -764,24 +764,24 @@ namespace YtDlpGui.WPF.Views {
     }
     public class LanguageConverter :IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            // 檢查輸入值是否為字串
+            // Check if input value is a string
             if (!(value is string key))
                 return value;
 
-            // 利用反射機制查詢 Lang 物件是否包含指定的 key 屬性
+            // Use reflection to check if Lang object contains the specified key property
             var Lang = App.Lang.Status;
             var propertyInfo = Lang.GetType().GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
-            // 如果 Lang 物件不包含指定的 key 屬性，則返回空字串
+            // If Lang object does not contain the specified key property, return empty string
             if (propertyInfo == null)
                 return key;
 
-            // 如果 Lang 物件包含指定的 key 屬性，則返回相應的值
+            // If Lang object contains the specified key property, return the corresponding value
             return propertyInfo.GetValue(Lang)?.ToString() ?? key;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            // ConvertBack 未實作，因為此轉換器僅用於單向綁定
+            // ConvertBack not implemented as this converter is only for one-way binding
             throw new NotImplementedException();
         }
     }
