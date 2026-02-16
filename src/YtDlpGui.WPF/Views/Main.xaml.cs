@@ -40,17 +40,17 @@ namespace YtDlpGui.WPF.Views {
             //Load Configs
             InitGUIConfig();
 
-            Topmost = Data.AlwaysOnTop;
-            if (Data.RememberWindowStatePosition) {
-                Top = Data.Top;
-                Left = Data.Left;
+            Topmost = Data.WindowState.AlwaysOnTop;
+            if (Data.WindowState.RememberWindowStatePosition) {
+                Top = Data.WindowState.Top;
+                Left = Data.WindowState.Left;
             }
-            if (Data.RememberWindowStateSize) {
-                Width = Data.Width;
-                Height = Data.Height;
+            if (Data.WindowState.RememberWindowStateSize) {
+                Width = Data.WindowState.Width;
+                Height = Data.WindowState.Height;
             } else {
-                Width = 600 * (Data.Scale / 100d);
-                Height = 380 * (Data.Scale / 100d);
+                Width = 600 * (Data.WindowState.Scale / 100d);
+                Height = 380 * (Data.WindowState.Scale / 100d);
             }
 
             //Configuration Checking (./configs/*.*)
@@ -152,8 +152,8 @@ namespace YtDlpGui.WPF.Views {
                             }
                         }
                         break;
-                    case nameof(Data.AlwaysOnTop):
-                        Topmost = Data.AlwaysOnTop;
+                    case nameof(Data.WindowState):
+                        Topmost = Data.WindowState.AlwaysOnTop;
                         break;
                 }
             };
@@ -686,10 +686,10 @@ namespace YtDlpGui.WPF.Views {
         }
 
         private void Window_Closed(object sender, EventArgs e) {
-            Data.Left = Left;
-            Data.Top = Top;
-            Data.Width = Width;
-            Data.Height = Height;
+            Data.WindowState.Left = Left;
+            Data.WindowState.Top = Top;
+            Data.WindowState.Width = Width;
+            Data.WindowState.Height = Height;
         }
         private void ComboBox_TextChanged(object sender, TextChangedEventArgs e) {
             var combo = sender as System.Windows.Controls.ComboBox;
@@ -752,14 +752,14 @@ namespace YtDlpGui.WPF.Views {
         }
 
         private void TextBoxNumber_Changed(object sender, EventArgs e) {
-            if (Data.Scale == 0) {
-                Data.Scale = 100;
-            } else if (Data.Scale < 80) {
-                Data.Scale = 80;
-            } else if (Data.Scale > 200) {
-                Data.Scale = 200;
+            if (Data.WindowState.Scale == 0) {
+                Data.WindowState.Scale = 100;
+            } else if (Data.WindowState.Scale < 80) {
+                Data.WindowState.Scale = 80;
+            } else if (Data.WindowState.Scale > 200) {
+                Data.WindowState.Scale = 200;
             }
-            ChangeScale(Data.Scale);
+            ChangeScale(Data.WindowState.Scale);
         }
     }
     public class LanguageConverter :IValueConverter {

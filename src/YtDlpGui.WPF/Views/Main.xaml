@@ -735,12 +735,12 @@
                 </Grid>
                 <!--Always on Top-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ -->
                 <TextBlock Grid.Row="2" Text="{Binding Source={x:Static app:App.Lang}, Path=Main.AlwaysOnTop}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <CheckBox Grid.Row="2" Grid.Column="2" Content="{Binding Source={x:Static app:App.Lang}, Path=Main.AlwaysOnTopEnabled}" IsChecked="{Binding AlwaysOnTop}"/>
+                <CheckBox Grid.Row="2" Grid.Column="2" Content="{Binding Source={x:Static app:App.Lang}, Path=Main.AlwaysOnTopEnabled}" IsChecked="{Binding WindowState.AlwaysOnTop}"/>
                 <!--Potistion & Size-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ -->
                 <TextBlock Grid.Row="3" Text="{Binding Source={x:Static app:App.Lang}, Path=Main.RememberWindowState}" Margin="0,2" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                 <StackPanel Grid.Row="3" Grid.Column="2">
-                    <CheckBox Content="{Binding Source={x:Static app:App.Lang}, Path=Main.RememberWindowPosition}" IsChecked="{Binding RememberWindowStatePosition}"/>
-                    <CheckBox Content="{Binding Source={x:Static app:App.Lang}, Path=Main.RememberWindowSize}" IsChecked="{Binding RememberWindowStateSize}"/>
+                    <CheckBox Content="{Binding Source={x:Static app:App.Lang}, Path=Main.RememberWindowPosition}" IsChecked="{Binding WindowState.RememberWindowStatePosition}"/>
+                    <CheckBox Content="{Binding Source={x:Static app:App.Lang}, Path=Main.RememberWindowSize}" IsChecked="{Binding WindowState.RememberWindowStateSize}"/>
                 </StackPanel>
                 <!--Scale-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ -->
                 <TextBlock Grid.Row="4" Text="{Binding Source={x:Static app:App.Lang}, Path=Main.Scale}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
@@ -751,7 +751,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBox MinWidth="36" Padding="2" Margin="0,2,2,0" VerticalAlignment="Center">
                         <i:Interaction.Behaviors>
-                            <b:TextBoxNumber MinValue="80" MaxValue="200" Number="{Binding Scale}" Changed="TextBoxNumber_Changed"/>
+                            <b:TextBoxNumber MinValue="80" MaxValue="200" Number="{Binding WindowState.Scale}" Changed="TextBoxNumber_Changed"/>
                         </i:Interaction.Behaviors>
                     </TextBox>
                     <TextBlock Grid.Column="1" Text="%" HorizontalAlignment="Left" VerticalAlignment="Center"/>

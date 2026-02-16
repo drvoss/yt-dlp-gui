@@ -193,13 +193,10 @@ namespace YtDlpGui.WPF.Views {
             public bool IsMonitor { get; set; } = false;
             public bool AlwaysOnTop { get; set; } = false;
             public bool AutoDownloadAnalysed { get; set; } = false;
-            public bool RememberWindowStatePosition { get; set; } = false;
-            public bool RememberWindowStateSize { get; set; } = false;
-            public double Top { get; set; } = 0;
-            public double Left { get; set; } = 0;
-            public double Width { get; set; } = 600;
-            public double Height { get; set; } = 380;
-            public int Scale { get; set; } = 100;
+            
+            // Window state - extracted to WindowStateViewModel
+            public WindowStateViewModel WindowState { get; set; } = new();
+            
             public bool ProxyEnabled { get; set; } = false;
             public string ProxyUrl { get; set; } = string.Empty;
             public bool CanCancel { get; set; } = false;
