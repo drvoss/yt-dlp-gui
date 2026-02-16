@@ -5,6 +5,10 @@
     <ProjectReference Include="..\YtDlpGui.Services\YtDlpGui.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="PropertyChanged.Fody" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -11,6 +11,7 @@ using YamlDotNet.Serialization;
 using YtDlpGui.Core.Models;
 using YtDlpGui.Services.Configuration;
 using YtDlpGui.Services.Web;
+using YtDlpGui.ViewModels;
 using YtDlpGui.WPF.Libs;
 
 namespace YtDlpGui.WPF.Views {
@@ -233,16 +234,14 @@ namespace YtDlpGui.WPF.Views {
             public string LimitRate { get; set; } = string.Empty;
             public Enable Enable { get; set; } = new();
             public bool AutoSaveConfig { get; set; } = false;
-            public string Html { get; set; } = string.Empty;
-            public string LastVersion { get; set; } = string.Empty;
-            public string LastCheckUpdate { get; set; } = string.Empty;
+            // Update-related properties - extracted to UpdateViewModel
+            public UpdateViewModel Update { get; set; } = new();
+            
             public string PathYTDLP { get; set; } = string.Empty;
             public string PathAria2 { get; set; } = string.Empty;
             public string PathFFMPEG { get; set; } = string.Empty;
             public string PathTEMP { get; set; } = string.Empty;
             public string PathNotify { get; set; } = string.Empty;
-            public bool NewVersion { get; set; } = false;
-            public List<GitRelease> ReleaseData { get; set; } = new();
             public GUIConfig GUIConfig { get; set; } = new();
             //status
             public DownloadStatus DNStatus_Video { get; set; } = new();
@@ -411,10 +410,6 @@ namespace YtDlpGui.WPF.Views {
             [YamlMember(Order = 1402)] public bool SaveThumbnail { get; set; } = true;
             [YamlMember(Order = 1403)] public bool UseNotifications { get; set; } = true;
             [YamlMember(Order = 1404)] public bool AutoDownloadAnalysed { get; set; } = false;
-            
-            [Description("Last Checking Update Date")]
-            [YamlMember(Order = 9001)] public string LastVersion { get; set; } = string.Empty;
-            [YamlMember(Order = 9002)] public string LastCheckUpdate { get; set; } = string.Empty;
             //[Description("Embed Subtitles")] public bool EmbedSub { get; set; } = false;
         }
         public class DownloadStatus {

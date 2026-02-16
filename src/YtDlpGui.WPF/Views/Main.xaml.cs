@@ -251,20 +251,20 @@ namespace YtDlpGui.WPF.Views {
             var needcheck = false;
             var currentDate = DateTimeOffset.UtcNow.ToString("yyyy-MM-dd"); //"";
 
-            if (!string.IsNullOrWhiteSpace(Data.LastVersion)) needcheck = true; //not yaml
-            if (currentDate != Data.LastCheckUpdate) needcheck = true; //cross date
+            if (!string.IsNullOrWhiteSpace(Data.Update.LastVersion)) needcheck = true; //not yaml
+            if (currentDate != Data.Update.LastCheckUpdate) needcheck = true; //cross date
 
             if (needcheck) {
                 var releaseData = await Web.GetLastTag();
                 var last = releaseData.FirstOrDefault();
                 if (last != null) {
-                    Data.ReleaseData = releaseData;
-                    Data.LastVersion = last.tag_name;
-                    Data.LastCheckUpdate = currentDate;
+                    Data.Update.ReleaseData = releaseData;
+                    Data.Update.LastVersion = last.tag_name;
+                    Data.Update.LastCheckUpdate = currentDate;
                 }
             }
-            if (string.Compare(App.CurrentVersion, Data.LastVersion) < 0) {
-                Data.NewVersion = true;
+            if (string.Compare(App.CurrentVersion, Data.Update.LastVersion) < 0) {
+                Data.Update.NewVersion = true;
             }
         }
         private void Button_Analyze(object sender, RoutedEventArgs e) {
