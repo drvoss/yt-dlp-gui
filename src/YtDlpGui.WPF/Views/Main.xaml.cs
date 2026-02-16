@@ -479,26 +479,26 @@ namespace YtDlpGui.WPF.Views {
                         dlp
                         .Temp(GetTempPath)
                         .LoadConfig(Data.selectedConfig.file)
-                        .MTime(Data.ModifiedType)
+                        .MTime(Data.DownloadOptions.ModifiedType)
                         .Cookie(Data.CookieType, Data.NeedCookie)
                         .Proxy(Data.Network.ProxyUrl, Data.Network.ProxyEnabled)
-                        .UseAria2(Data.UseAria2)
-                        .LimitRate(Data.LimitRate)
-                        .DownloadSections(Data.TimeRange)
+                        .UseAria2(Data.DownloadOptions.UseAria2)
+                        .LimitRate(Data.DownloadOptions.LimitRate)
+                        .DownloadSections(Data.DownloadOptions.TimeRange)
                         .SplitChapters(Data.FormatSelection.selectedChapter, Data.OutputPath.TargetFile);
 
                         switch (type) {
                             case DownloadType.Video:
                                 dlp
-                                .EmbedChapters(Data.EmbedChapters)
-                                .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
-                                .Subtitle(Data.FormatSelection.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
+                                .EmbedChapters(Data.DownloadOptions.EmbedChapters)
+                                .Thumbnail(Data.DownloadOptions.SaveThumbnail, Data.OutputPath.TargetFile, Data.DownloadOptions.EmbedThumbnail)
+                                .Subtitle(Data.FormatSelection.selectedSub.key, Data.OutputPath.TargetFile, Data.DownloadOptions.EmbedSubtitles)
                                 .DownloadVideo(vid, Data.FormatSelection.selectedVideo.video_ext, target);
                                 break;
                             case DownloadType.Audio:
                                 dlp
-                                .EmbedChapters(Data.EmbedChapters)
-                                .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
+                                .EmbedChapters(Data.DownloadOptions.EmbedChapters)
+                                .Thumbnail(Data.DownloadOptions.SaveThumbnail, Data.OutputPath.TargetFile, Data.DownloadOptions.EmbedThumbnail)
                                 .DownloadAudio(vid, target);
                                 break;
                             case DownloadType.Subtitle:
@@ -506,9 +506,9 @@ namespace YtDlpGui.WPF.Views {
                                 break;
                             default:
                                 dlp
-                                .EmbedChapters(Data.EmbedChapters)
-                                .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
-                                .Subtitle(Data.FormatSelection.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
+                                .EmbedChapters(Data.DownloadOptions.EmbedChapters)
+                                .Thumbnail(Data.DownloadOptions.SaveThumbnail, Data.OutputPath.TargetFile, Data.DownloadOptions.EmbedThumbnail)
+                                .Subtitle(Data.FormatSelection.selectedSub.key, Data.OutputPath.TargetFile, Data.DownloadOptions.EmbedSubtitles)
                                 .DownloadFormat(vid, Data.OutputPath.TargetFile, Data.OriginExt);
                                 break;
                         }
@@ -534,7 +534,7 @@ namespace YtDlpGui.WPF.Views {
                             if (File.Exists(donepath)) {
                                 if (donepath.isVideo()) files["video"] = donepath;
                                 if (donepath.isImage()) files["thumb"] = donepath;
-                                if (Data.ModifiedType == ModifiedType.Upload) {
+                                if (Data.DownloadOptions.ModifiedType == ModifiedType.Upload) {
                                     if (DateTimeOffset.TryParseExact(Data.Video.upload_date, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset tryDate)) {
                                         File.SetLastWriteTimeUtc(donepath, tryDate.DateTime);
                                     }
@@ -544,7 +544,7 @@ namespace YtDlpGui.WPF.Views {
 
                         //Send notification when download completed
                         try {
-                            if (Data.UseNotifications) {
+                            if (Data.DownloadOptions.UseNotifications) {
                                 Util.NotifySound(Data.PathNotify);
                                 var toast = new ToastContentBuilder()
                                     .AddText(Data.Video.title)

@@ -183,6 +183,9 @@ namespace YtDlpGui.WPF.Views {
             // Output path - extracted to OutputPathViewModel
             public OutputPathViewModel OutputPath { get; set; } = new();
             
+            // Download options - extracted to DownloadOptionsViewModel
+            public DownloadOptionsViewModel DownloadOptions { get; set; } = new();
+            
             public string Url { get; set; } = string.Empty;
             public string CommandLine { get; set; } = string.Empty;
             public bool IsPackage { get; set; } = false;
@@ -191,17 +194,7 @@ namespace YtDlpGui.WPF.Views {
             public string ExecText { get; set; } = string.Empty;
             public UseCookie UseCookie { get; set; } = UseCookie.WhenNeeded;
             public CookieType CookieType { get; set; } = CookieType.Chrome;
-            public bool UseNotifications { get; set; } = true;
-            public bool UseAria2 { get; set; } = true;
             public bool NeedCookie { get; set; } = false;
-            public bool SaveThumbnail { get; set; } = true;
-            public bool EmbedSub { get; set; } = false;
-            public bool EmbedThumbnail { get; set; } = false;
-            public bool EmbedChapters { get; set; } = false;
-            public bool EmbedSubtitles { get; set; } = false;
-            public ModifiedType ModifiedType { get; set; } = ModifiedType.Modified;
-            public string TimeRange { get; set; } = string.Empty;
-            public string LimitRate { get; set; } = string.Empty;
             public Enable Enable { get; set; } = new();
             public bool AutoSaveConfig { get; set; } = false;
             // Update-related properties - extracted to UpdateViewModel
