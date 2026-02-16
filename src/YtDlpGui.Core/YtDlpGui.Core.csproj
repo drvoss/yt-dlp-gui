@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swordfish.NET.CollectionsV3" Version="3.3.12" />
-    <PackageReference Include="YamlDotNet" Version="13.0.2" />
+    <PackageReference Include="Swordfish.NET.CollectionsV3" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
 </Project>

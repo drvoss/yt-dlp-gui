@@ -5,8 +5,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="YamlDotNet" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
   <PropertyGroup>

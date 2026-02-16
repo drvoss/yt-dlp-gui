@@ -1,0 +1,29 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF UI Components -->
+    <PackageVersion Include="AvalonEdit" Version="6.3.0.90" />
+    <PackageVersion Include="MdXaml_migfree" Version="1.15.0" />
+    <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageVersion Include="SharpClipboard" Version="3.5.2" />
+    
+    <!-- Microsoft Libraries -->
+    <PackageVersion Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+    <PackageVersion Include="System.Resources.ResourceManager" Version="4.3.0" />
+    
+    <!-- Data Serialization -->
+    <PackageVersion Include="Markdig" Version="0.45.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="YamlDotNet" Version="13.0.2" />
+    
+    <!-- Collections & Utilities -->
+    <PackageVersion Include="Swordfish.NET.CollectionsV3" Version="3.3.12" />
+    
+    <!-- Code Generation -->
+    <PackageVersion Include="PropertyChanged.Fody" Version="4.1.0" />
+  </ItemGroup>
+</Project>
