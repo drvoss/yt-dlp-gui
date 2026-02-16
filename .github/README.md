@@ -55,11 +55,12 @@ This fork aims to:
 
 ### Modern Fork Enhancements
 * 🐛 **Better Debugging**: Full debug symbols for Visual Studio
-* 📦 **Updated Dependencies**: Latest stable NuGet packages
+* 📦 **Updated Dependencies**: Latest stable NuGet packages (.NET 8.0, Markdig 0.45.0, etc.)
 * 🌐 **Improved Translations**: Fixed typos in Korean and other languages
-* 🏗️ **Clean Architecture**: Separated concerns, testable code
-* 🔧 **Better Error Handling**: Comprehensive exception management
-* ⚡ **Performance**: Async operations, optimized memory usage
+* 🏗️ **Clean Architecture**: Multi-project solution with proper separation of concerns
+* 🎯 **Modern Platform**: .NET 8.0 LTS with C# 12 features
+* 📁 **Organized Structure**: 4-layer architecture (Core, Services, ViewModels, WPF)
+* 🔧 **Better Maintainability**: 58 files reorganized for easier testing and development
 
 ---
 
@@ -74,30 +75,40 @@ This fork aims to:
 
 ## 🚀 Development Roadmap
 
-### Phase 1: Foundation (✅ Completed)
+### Phase 1: Foundation (✅ Completed - 2026-02-16)
 - [x] Korean translation fixes
 - [x] Restore debug configuration
 - [x] Update NuGet packages
-- [x] PR submitted to original project
+- [x] PR submitted to original project (#175)
 
-### Phase 2: Architecture Refactoring (🚧 In Progress)
-- [ ] Migrate to .NET 8.0
-- [ ] Split ViewData into focused ViewModels
-- [ ] Extract service layer (IDownloadService, IFormatService, etc.)
-- [ ] Introduce dependency injection
-- [ ] Remove code-behind logic
+### Phase 2: Architecture Modernization (🚧 In Progress - 50% Complete)
+
+#### Completed
+- [x] **Migrate to .NET 8.0** - Upgraded from .NET 6.0 to .NET 8.0 LTS with C# 12 support
+- [x] **Multi-Project Solution** - Restructured into 4 projects (Core, Services, ViewModels, WPF)
+  - YtDlpGui.Core: Domain models and interfaces
+  - YtDlpGui.Services: Business logic and service implementations
+  - YtDlpGui.ViewModels: MVVM layer (prepared)
+  - YtDlpGui.WPF: UI layer with Views, Controls, Themes
+
+#### In Progress
+- [ ] Central Package Management (Directory.Packages.props)
+- [ ] GitHub Actions CI/CD pipeline
+- [ ] Extract ViewData into focused ViewModels
+- [ ] Create service interfaces (IDownloadService, IFormatService, etc.)
+- [ ] Introduce dependency injection container
 
 ### Phase 3: Testing Infrastructure (📅 Planned)
-- [ ] Setup xUnit test projects
+- [ ] Setup xUnit test projects for Core and Services
 - [ ] Unit tests for ViewModels
-- [ ] Integration tests for services
-- [ ] GitHub Actions CI/CD pipeline
+- [ ] Integration tests for Services
+- [ ] Automated test execution in CI/CD
 - [ ] Target: 60%+ code coverage
 
 ### Phase 4: Performance & Polish (📅 Planned)
-- [ ] Convert blocking operations to async
-- [ ] Memory optimization (circular buffers)
-- [ ] PropertyChanged optimization
+- [ ] Convert blocking operations to async/await
+- [ ] Memory optimization (circular buffers for logs)
+- [ ] PropertyChanged optimization with value comparison
 - [ ] Startup time improvement
 - [ ] UI responsiveness enhancements
 
