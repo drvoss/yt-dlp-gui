@@ -296,7 +296,7 @@ namespace YtDlpGui.WPF.Views {
             //Analyze
             var dlp = new DLP(Data.Url);
             if (Data.NeedCookie) dlp.Cookie(Data.CookieType);
-            dlp.Proxy(Data.ProxyUrl, Data.ProxyEnabled);
+            dlp.Proxy(Data.Network.ProxyUrl, Data.Network.ProxyEnabled);
             dlp.GetInfo();
             if (!string.IsNullOrWhiteSpace(Data.selectedConfig.file)) {
                 dlp.LoadConfig(Data.selectedConfig.file);
@@ -481,7 +481,7 @@ namespace YtDlpGui.WPF.Views {
                         .LoadConfig(Data.selectedConfig.file)
                         .MTime(Data.ModifiedType)
                         .Cookie(Data.CookieType, Data.NeedCookie)
-                        .Proxy(Data.ProxyUrl, Data.ProxyEnabled)
+                        .Proxy(Data.Network.ProxyUrl, Data.Network.ProxyEnabled)
                         .UseAria2(Data.UseAria2)
                         .LimitRate(Data.LimitRate)
                         .DownloadSections(Data.TimeRange)
@@ -634,7 +634,7 @@ namespace YtDlpGui.WPF.Views {
             var progress = new Progress<double>(percentage => {
                 Debug.Write($"\rDownloading... {percentage:0.00}%");
             });
-            Web.Download(Data.Thumbnail, origin, progress, Data.ProxyEnabled ? Data.ProxyUrl : null).Wait();
+            Web.Download(Data.Thumbnail, origin, progress, Data.Network.ProxyEnabled ? Data.Network.ProxyUrl : null).Wait();
             //convert to target ext
             if (Path.GetExtension(origin).ToLower() != Path.GetExtension(target)) {
                 FFMPEG.DownloadUrl(origin, target);

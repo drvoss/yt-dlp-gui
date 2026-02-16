@@ -623,8 +623,8 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <CheckBox Grid.Row="0" Content="{Binding Source={x:Static app:App.Lang}, Path=Main.ProxyEnabled}" IsChecked="{Binding ProxyEnabled}"/>
-                    <controls:TextEditor Grid.Row="1" Helper="{Binding Source={x:Static app:App.Lang}, Path=Main.ProxyHelper}" Text="{Binding ProxyUrl}" 
+                    <CheckBox Grid.Row="0" Content="{Binding Source={x:Static app:App.Lang}, Path=Main.ProxyEnabled}" IsChecked="{Binding Network.ProxyEnabled}"/>
+                    <controls:TextEditor Grid.Row="1" Helper="{Binding Source={x:Static app:App.Lang}, Path=Main.ProxyHelper}" Text="{Binding Network.ProxyUrl}" 
                                          Margin="0,2" EnableHyperlinks="False"/>
                 </Grid>
                 <!--UseCookie-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ -->

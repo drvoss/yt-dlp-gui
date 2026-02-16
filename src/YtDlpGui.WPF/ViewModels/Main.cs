@@ -197,8 +197,9 @@ namespace YtDlpGui.WPF.Views {
             // Window state - extracted to WindowStateViewModel
             public WindowStateViewModel WindowState { get; set; } = new();
             
-            public bool ProxyEnabled { get; set; } = false;
-            public string ProxyUrl { get; set; } = string.Empty;
+            // Network settings - extracted to NetworkSettingsViewModel
+            public NetworkSettingsViewModel Network { get; set; } = new();
+            
             public bool CanCancel { get; set; } = false;
             public string Url { get; set; } = string.Empty;
             public string CommandLine { get; set; } = string.Empty;
