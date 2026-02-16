@@ -60,8 +60,8 @@ namespace YtDlpGui.WPF.Views {
             ScanDepends();
 
             //if `Target` Not exist, default app location
-            if (!Directory.Exists(Data.TargetPath)) {
-                Data.TargetPath = App.AppPath;
+            if (!Directory.Exists(Data.OutputPath.TargetPath)) {
+                Data.OutputPath.TargetPath = App.AppPath;
             }
             //Default Temp Dir
             if (string.IsNullOrWhiteSpace(Data.PathTEMP) || !Directory.Exists(GetTempPath)) {
@@ -108,7 +108,7 @@ namespace YtDlpGui.WPF.Views {
         }
         private string GetEnvPath(string path) {
             Dictionary<string, string> replacements = new() {
-                {"%YTDLPGUI_TARGET%", Data.TargetPath},
+                {"%YTDLPGUI_TARGET%", Data.OutputPath.TargetPath},
                 {"%YTDLPGUI_LOCALE%", App.AppPath}
             };
             foreach (KeyValuePair<string, string> pair in replacements) {
@@ -276,7 +276,7 @@ namespace YtDlpGui.WPF.Views {
             cv.SelectedIndex = -1;
             ca.SelectedIndex = -1;
             cs.SelectedIndex = -1;
-            Data.Thumbnail = null;
+            Data.OutputPath.Thumbnail = null;
             Data.Video = new();
             Data.NeedCookie = Data.UseCookie == UseCookie.Always;
 
@@ -350,9 +350,9 @@ namespace YtDlpGui.WPF.Views {
                 }
                 var BestUrl = Data.Thumbnails.LastOrDefault()?.url;
                 if (BestUrl != null && Web.Head(BestUrl)) {
-                    Data.Thumbnail = BestUrl;
+                    Data.OutputPath.Thumbnail = BestUrl;
                 } else {
-                    Data.Thumbnail = Data.Video.thumbnail;
+                    Data.OutputPath.Thumbnail = Data.Video.thumbnail;
                 }
 
                 Data.SelectFormatBest(); //Make ComboBox Selected Item
@@ -360,10 +360,10 @@ namespace YtDlpGui.WPF.Views {
                 if (Path.IsPathRooted(Data.Video._filename)) {
                     full = Path.GetFullPath(Data.Video._filename);
                 } else {
-                    full = Path.Combine(Data.TargetPath, Data.Video._filename);
+                    full = Path.Combine(Data.OutputPath.TargetPath, Data.Video._filename);
                 }
-                //Data.TargetName = GetValidFileName(Data.Video.title) + ".tmp"; // Default filename
-                Data.TargetName = full; // Default filename
+                //Data.OutputPath.TargetName = GetValidFileName(Data.Video.title) + ".tmp"; // Default filename
+                Data.OutputPath.TargetName = full; // Default filename
 
             });
             dlp.Err(DLP.DLPError.Sign, () => {
@@ -399,7 +399,7 @@ namespace YtDlpGui.WPF.Views {
                 $"{App.Lang.Files.mov}|*.mov|" +
                 $"{App.Lang.Files.flv}|*.flv";
             dialog.DefaultExt = Data.selectedVideo.video_ext.ToLower();
-            dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.TargetFile), dialog.DefaultExt);
+            dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), dialog.DefaultExt);
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var target = dialog.FileName;
                 Download_Start_Native(DownloadType.Video, target);
@@ -418,14 +418,14 @@ namespace YtDlpGui.WPF.Views {
                 $"{App.Lang.Files.flac}|*.flac|" +
                 $"{App.Lang.Files.wav}|*.wav";
             dialog.DefaultExt = Data.selectedAudio.acodec.ToLower();
-            dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.TargetFile), dialog.DefaultExt);
+            dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), dialog.DefaultExt);
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var target = dialog.FileName;
                 Download_Start_Native(DownloadType.Audio, target);
             }
         }
         private void Button_ExplorerTarget(object sender, RoutedEventArgs e) {
-            Util.Explorer(Data.TargetFile);
+            Util.Explorer(Data.OutputPath.TargetFile);
         }
         private void Button_Cancel(object sender, RoutedEventArgs e) {
             if (Data.DownloadProgress.IsDownload) {
@@ -452,7 +452,7 @@ namespace YtDlpGui.WPF.Views {
                 var overwrite = true;
                 RunningDLP.Clear();
                 // Check if file already exists
-                if (File.Exists(Data.TargetFile) && type == DownloadType.Normal) {
+                if (File.Exists(Data.OutputPath.TargetFile) && type == DownloadType.Normal) {
                     var mb = System.Windows.Forms.MessageBox.Show(
                         $"{App.Lang.Dialog.FileExist}\n",
                         $"{App.AppName}",
@@ -485,20 +485,20 @@ namespace YtDlpGui.WPF.Views {
                         .UseAria2(Data.UseAria2)
                         .LimitRate(Data.LimitRate)
                         .DownloadSections(Data.TimeRange)
-                        .SplitChapters(Data.selectedChapter, Data.TargetFile);
+                        .SplitChapters(Data.selectedChapter, Data.OutputPath.TargetFile);
 
                         switch (type) {
                             case DownloadType.Video:
                                 dlp
                                 .EmbedChapters(Data.EmbedChapters)
-                                .Thumbnail(Data.SaveThumbnail, Data.TargetFile, Data.EmbedThumbnail)
-                                .Subtitle(Data.selectedSub.key, Data.TargetFile, Data.EmbedSubtitles)
+                                .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
+                                .Subtitle(Data.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
                                 .DownloadVideo(vid, Data.selectedVideo.video_ext, target);
                                 break;
                             case DownloadType.Audio:
                                 dlp
                                 .EmbedChapters(Data.EmbedChapters)
-                                .Thumbnail(Data.SaveThumbnail, Data.TargetFile, Data.EmbedThumbnail)
+                                .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
                                 .DownloadAudio(vid, target);
                                 break;
                             case DownloadType.Subtitle:
@@ -507,9 +507,9 @@ namespace YtDlpGui.WPF.Views {
                             default:
                                 dlp
                                 .EmbedChapters(Data.EmbedChapters)
-                                .Thumbnail(Data.SaveThumbnail, Data.TargetFile, Data.EmbedThumbnail)
-                                .Subtitle(Data.selectedSub.key, Data.TargetFile, Data.EmbedSubtitles)
-                                .DownloadFormat(vid, Data.TargetFile, Data.OriginExt);
+                                .Thumbnail(Data.SaveThumbnail, Data.OutputPath.TargetFile, Data.EmbedThumbnail)
+                                .Subtitle(Data.selectedSub.key, Data.OutputPath.TargetFile, Data.EmbedSubtitles)
+                                .DownloadFormat(vid, Data.OutputPath.TargetFile, Data.OriginExt);
                                 break;
                         }
                         var repoter = new StatusRepoter(Data);
@@ -583,26 +583,26 @@ namespace YtDlpGui.WPF.Views {
         }
 
         private void Button_Browser(object sender, RoutedEventArgs e) {
-            if (string.IsNullOrWhiteSpace(Data.TargetName)) {
+            if (string.IsNullOrWhiteSpace(Data.OutputPath.TargetName)) {
                 var dialog = new FolderBrowserDialog();
-                dialog.SelectedPath = Data.TargetPath;
+                dialog.SelectedPath = Data.OutputPath.TargetPath;
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                    Data.TargetPath = dialog.SelectedPath;
+                    Data.OutputPath.TargetPath = dialog.SelectedPath;
                 }
             } else {
                 var dialog = new SaveFileDialog();
-                dialog.InitialDirectory = Path.GetDirectoryName(Data.TargetFile);
-                dialog.FileName = Path.GetFileName(Data.TargetFile);
+                dialog.InitialDirectory = Path.GetDirectoryName(Data.OutputPath.TargetFile);
+                dialog.FileName = Path.GetFileName(Data.OutputPath.TargetFile);
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     Data.RemuxVideo = true;
-                    Data.TargetPath = Path.GetDirectoryName(dialog.FileName);
-                    Data.TargetName = Path.GetFileName(dialog.FileName);
+                    Data.OutputPath.TargetPath = Path.GetDirectoryName(dialog.FileName);
+                    Data.OutputPath.TargetName = Path.GetFileName(dialog.FileName);
                     Data.RemuxVideo = false;
                     /*
                     if ((new string[] { ".mp4", ".webm", ".3gp", ".mkv" }).Any(x => Path.GetExtension(dialog.FileName).ToLower() == x)) {
-                        Data.TargetName = Path.GetFileName(dialog.FileName);
+                        Data.OutputPath.TargetName = Path.GetFileName(dialog.FileName);
                     } else {
-                        Data.TargetName = Path.GetFileName(dialog.FileName) + ".tmp";
+                        Data.OutputPath.TargetName = Path.GetFileName(dialog.FileName) + ".tmp";
                     }
                     */
                 }
@@ -616,9 +616,9 @@ namespace YtDlpGui.WPF.Views {
         }
         private async void CommandBinding_SaveAs_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) {
             var dialog = new SaveFileDialog();
-            dialog.InitialDirectory = Path.GetDirectoryName(Data.TargetFile);
-            var OrigExt = Path.GetExtension(Data.Thumbnail);
-            var OrigFileName = Path.ChangeExtension(Path.GetFileName(Data.TargetFile), OrigExt);
+            dialog.InitialDirectory = Path.GetDirectoryName(Data.OutputPath.TargetFile);
+            var OrigExt = Path.GetExtension(Data.OutputPath.Thumbnail);
+            var OrigFileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), OrigExt);
             dialog.DefaultExt = ".jpg";
             dialog.Filter = $"{App.Lang.Files.image}|*.jpg;*.webp";
             dialog.FileName = Path.ChangeExtension(OrigFileName, ".jpg");
@@ -627,14 +627,14 @@ namespace YtDlpGui.WPF.Views {
             }
         }
         private void DownloadThumbnail(string toFile) {
-            var origExt = Path.GetExtension(Data.Thumbnail);
-            var origin = Path.ChangeExtension(Data.TargetFile, origExt);
-            //var target = Path.ChangeExtension(Data.TargetFile, ".jpg");
+            var origExt = Path.GetExtension(Data.OutputPath.Thumbnail);
+            var origin = Path.ChangeExtension(Data.OutputPath.TargetFile, origExt);
+            //var target = Path.ChangeExtension(Data.OutputPath.TargetFile, ".jpg");
             var target = toFile;
             var progress = new Progress<double>(percentage => {
                 Debug.Write($"\rDownloading... {percentage:0.00}%");
             });
-            Web.Download(Data.Thumbnail, origin, progress, Data.Network.ProxyEnabled ? Data.Network.ProxyUrl : null).Wait();
+            Web.Download(Data.OutputPath.Thumbnail, origin, progress, Data.Network.ProxyEnabled ? Data.Network.ProxyUrl : null).Wait();
             //convert to target ext
             if (Path.GetExtension(origin).ToLower() != Path.GetExtension(target)) {
                 FFMPEG.DownloadUrl(origin, target);
@@ -643,12 +643,12 @@ namespace YtDlpGui.WPF.Views {
         }
 
         private void CommandBinding_SaveAs_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e) {
-            e.CanExecute = !string.IsNullOrWhiteSpace(Data.Thumbnail);
+            e.CanExecute = !string.IsNullOrWhiteSpace(Data.OutputPath.Thumbnail);
         }
 
         private void Button_Subtitle(object sender, RoutedEventArgs e) {
             var dialog = new SaveFileDialog();
-            dialog.InitialDirectory = Path.GetDirectoryName(Data.TargetFile);
+            dialog.InitialDirectory = Path.GetDirectoryName(Data.OutputPath.TargetFile);
             //dialog.Filter = "SubRip | *.srt";
             //dialog.DefaultExt = Data.selectedSub.key + ".srt";
             dialog.DefaultExt = ".srt";
@@ -662,8 +662,8 @@ namespace YtDlpGui.WPF.Views {
                 $"{App.Lang.Files.srv2}|*.srv2|" +
                 $"{App.Lang.Files.srv1}|*.srv1|" +
                 $"{App.Lang.Files.json3}|*.json3";
-            //dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.TargetFile), Data.selectedSub.key + ".srt");
-            dialog.FileName = Path.ChangeExtension(Data.TargetFile, null);
+            //dialog.FileName = Path.ChangeExtension(Path.GetFileName(Data.OutputPath.TargetFile), Data.selectedSub.key + ".srt");
+            dialog.FileName = Path.ChangeExtension(Data.OutputPath.TargetFile, null);
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var target = dialog.FileName;
                 Debug.WriteLine(dialog.FileName, "DIALOG");
@@ -786,4 +786,5 @@ namespace YtDlpGui.WPF.Views {
         }
     }
 }
+
 

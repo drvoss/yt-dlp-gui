@@ -97,17 +97,10 @@ namespace YtDlpGui.WPF.Views {
                         break;
                     case nameof(selectedAudio):
                         CheckExtension();
+                        UpdateOutputPath();
                         break;
-                    case nameof(TargetPath):
-                        if (TargetPath.Last() != Path.DirectorySeparatorChar) TargetPath += Path.DirectorySeparatorChar;
-                        TargetFile = Path.Combine(TargetPath, TargetName);
-                        break;
-                    case nameof(TargetName):
-                        CheckExtension();
-                        TargetFile = Path.Combine(TargetPath, TargetName);
-                        break;
-                    case nameof(TargetFile):
-                        TargetDisplay = Util.ReplaceSpecialPath(TargetFile);
+                    case nameof(OutputPath):
+                        UpdateOutputPath();
                         break;
                     case nameof(ImageWidth):
                         ImageHeight = ImageWidth * 0.5625d;
@@ -116,6 +109,18 @@ namespace YtDlpGui.WPF.Views {
                 CheckEnable();
 
                 if (AutoSaveConfig) Util.PropertyCopy(this, GUIConfig);
+            }
+            
+            private void UpdateOutputPath() {
+                if (!string.IsNullOrEmpty(OutputPath.TargetPath)) {
+                    if (OutputPath.TargetPath.Last() != Path.DirectorySeparatorChar) {
+                        OutputPath.TargetPath += Path.DirectorySeparatorChar;
+                    }
+                }
+                if (!string.IsNullOrEmpty(OutputPath.TargetPath) && !string.IsNullOrEmpty(OutputPath.TargetName)) {
+                    OutputPath.TargetFile = Path.Combine(OutputPath.TargetPath, OutputPath.TargetName);
+                    OutputPath.TargetDisplay = Util.ReplaceSpecialPath(OutputPath.TargetFile);
+                }
             }
             public void SelectFormatBest() {
                 selectedChapter = Chapters.FirstOrDefault();
@@ -132,21 +137,12 @@ namespace YtDlpGui.WPF.Views {
             }
             public void CheckExtension() {
                 if (RemuxVideo) return;
-                if (!string.IsNullOrWhiteSpace(TargetName)) {
+                if (!string.IsNullOrWhiteSpace(OutputPath.TargetName)) {
                     if (selectedVideo != null && selectedAudio != null) {
-                        /*
-                        if (selectedVideo.type == FormatType.package) {
-                            TargetName = Path.ChangeExtension(TargetName, selectedVideo.video_ext);
-                        } else if (selectedVideo.video_ext == "webm" && selectedAudio.audio_ext == "webm") {
-                            TargetName = Path.ChangeExtension(TargetName, "webm");
-                        } else if (selectedVideo.video_ext == "mp4" && selectedAudio.audio_ext == "m4a") {
-                            TargetName = Path.ChangeExtension(TargetName, "mp4");
-                        } else {
-                            TargetName = Path.ChangeExtension(TargetName, "mkv");
-                        }*/
-                        TargetName = Path.ChangeExtension(TargetName, OriginExt);
+                        OutputPath.TargetName = Path.ChangeExtension(OutputPath.TargetName, OriginExt);
                     }
                 }
+                UpdateOutputPath();
             }
             public string OriginExt {
                 get {
@@ -203,14 +199,12 @@ namespace YtDlpGui.WPF.Views {
             // Network settings - extracted to NetworkSettingsViewModel
             public NetworkSettingsViewModel Network { get; set; } = new();
             
+            // Output path - extracted to OutputPathViewModel
+            public OutputPathViewModel OutputPath { get; set; } = new();
+            
             public string Url { get; set; } = string.Empty;
             public string CommandLine { get; set; } = string.Empty;
             public bool IsPackage { get; set; } = false;
-            public string TargetPath { get; set; } = string.Empty;
-            public string TargetName { get; set; } = string.Empty;
-            public string TargetFile { get; set; } = string.Empty;
-            public string TargetDisplay { get; set; } = string.Empty;
-            public string? Thumbnail { get; set; } = null;
             public double ImageWidth { get; set; } = 0; //Binding 16:9
             public double ImageHeight { get; set; } = 0;
             public string ExecText { get; set; } = string.Empty;

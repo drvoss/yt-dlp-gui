@@ -163,7 +163,7 @@
                             <Grid>
                                 <TextBlock Text="{Binding Source={x:Static app:App.Lang}, Path=Main.Thumbnail}" Foreground="Gray" IsHitTestVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <Image VerticalAlignment="Center" Stretch="UniformToFill"
-                                       Source="{Binding Thumbnail, TargetNullValue={x:Null}}">
+                                       Source="{Binding OutputPath.Thumbnail, TargetNullValue={x:Null}}">
                                     <Image.CacheMode>
                                         <BitmapCache EnableClearType="False" RenderAtScale="1" SnapsToDevicePixels="False"/>
                                     </Image.CacheMode>
@@ -175,10 +175,10 @@
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Thumbnail}" Value="">
+                                                <DataTrigger Binding="{Binding OutputPath.Thumbnail}" Value="">
                                                     <Setter Property="Visibility" Value="Hidden"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Thumbnail}" Value="{x:Null}">
+                                                <DataTrigger Binding="{Binding OutputPath.Thumbnail}" Value="{x:Null}">
                                                     <Setter Property="Visibility" Value="Hidden"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -546,7 +546,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Button"/>
                         </Grid.ColumnDefinitions>
-                        <controls:TextEditor Helper="{Binding Source={x:Static app:App.Lang}, Path=Main.SaveAs}" Text="{Binding TargetDisplay}" 
+                        <controls:TextEditor Helper="{Binding Source={x:Static app:App.Lang}, Path=Main.SaveAs}" Text="{Binding OutputPath.TargetDisplay}" 
                                              IsReadOnly="True" WordWrap="True" Margin="0,2"/>
                         <Button Grid.Column="1" Margin="2" Cursor="Hand" Click="Button_ExplorerTarget">
                             <StackPanel Orientation="Horizontal" Margin="4,0">
