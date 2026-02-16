@@ -186,25 +186,23 @@ namespace YtDlpGui.WPF.Views {
             // Download options - extracted to DownloadOptionsViewModel
             public DownloadOptionsViewModel DownloadOptions { get; set; } = new();
             
+            // Cookie settings - extracted to CookieSettingsViewModel
+            public CookieSettingsViewModel CookieSettings { get; set; } = new();
+            
+            // Paths - extracted to PathsViewModel
+            public PathsViewModel Paths { get; set; } = new();
+            
             public string Url { get; set; } = string.Empty;
             public string CommandLine { get; set; } = string.Empty;
             public bool IsPackage { get; set; } = false;
             public double ImageWidth { get; set; } = 0; //Binding 16:9
             public double ImageHeight { get; set; } = 0;
             public string ExecText { get; set; } = string.Empty;
-            public UseCookie UseCookie { get; set; } = UseCookie.WhenNeeded;
-            public CookieType CookieType { get; set; } = CookieType.Chrome;
-            public bool NeedCookie { get; set; } = false;
             public Enable Enable { get; set; } = new();
             public bool AutoSaveConfig { get; set; } = false;
             // Update-related properties - extracted to UpdateViewModel
             public UpdateViewModel Update { get; set; } = new();
             
-            public string PathYTDLP { get; set; } = string.Empty;
-            public string PathAria2 { get; set; } = string.Empty;
-            public string PathFFMPEG { get; set; } = string.Empty;
-            public string PathTEMP { get; set; } = string.Empty;
-            public string PathNotify { get; set; } = string.Empty;
             public GUIConfig GUIConfig { get; set; } = new();
             public string ClipboardText { get; set; } = string.Empty;
             //

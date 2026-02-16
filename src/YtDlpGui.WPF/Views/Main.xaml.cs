@@ -64,8 +64,8 @@ namespace YtDlpGui.WPF.Views {
                 Data.OutputPath.TargetPath = App.AppPath;
             }
             //Default Temp Dir
-            if (string.IsNullOrWhiteSpace(Data.PathTEMP) || !Directory.Exists(GetTempPath)) {
-                Data.PathTEMP = "%YTDLPGUI_TARGET%";
+            if (string.IsNullOrWhiteSpace(Data.Paths.PathTEMP) || !Directory.Exists(GetTempPath)) {
+                Data.Paths.PathTEMP = "%YTDLPGUI_TARGET%";
             }
 
             //Monitor Clipboard
@@ -133,7 +133,7 @@ namespace YtDlpGui.WPF.Views {
             return Environment.ExpandEnvironmentVariables(path);
         }
         private string GetTempPath {
-            get => GetEnvPath(Data.PathTEMP);
+            get => GetEnvPath(Data.Paths.PathTEMP);
         }
         //Regex For Clipboard
         private Regex _frgPat = new Regex("<!--StartFragment-->(.*)<!--EndFragment-->", RegexOptions.Multiline | RegexOptions.Compiled);
@@ -210,15 +210,15 @@ namespace YtDlpGui.WPF.Views {
         }
         public void ScanDepends() {
             var isYoutubeDl = @"^youtube-dl\.exe";
-            if (!string.IsNullOrWhiteSpace(Data.PathYTDLP) && File.Exists(Data.PathYTDLP)) {
-                DLP.Path_DLP = Data.PathYTDLP;
+            if (!string.IsNullOrWhiteSpace(Data.Paths.PathYTDLP) && File.Exists(Data.Paths.PathYTDLP)) {
+                DLP.Path_DLP = Data.Paths.PathYTDLP;
             }
-            if (!string.IsNullOrWhiteSpace(Data.PathAria2) && File.Exists(Data.PathAria2)) {
-                DLP.Path_Aria2 = Data.PathAria2;
+            if (!string.IsNullOrWhiteSpace(Data.Paths.PathAria2) && File.Exists(Data.Paths.PathAria2)) {
+                DLP.Path_Aria2 = Data.Paths.PathAria2;
             }
-            if (!string.IsNullOrWhiteSpace(Data.PathFFMPEG) && File.Exists(Data.PathFFMPEG)) {
-                DLP.Path_FFMPEG = Data.PathFFMPEG;
-                FFMPEG.Path_FFMPEG = Data.PathFFMPEG;
+            if (!string.IsNullOrWhiteSpace(Data.Paths.PathFFMPEG) && File.Exists(Data.Paths.PathFFMPEG)) {
+                DLP.Path_FFMPEG = Data.Paths.PathFFMPEG;
+                FFMPEG.Path_FFMPEG = Data.Paths.PathFFMPEG;
             }
             if (string.IsNullOrWhiteSpace(DLP.Path_DLP) ||
                 string.IsNullOrWhiteSpace(DLP.Path_Aria2) ||
@@ -231,18 +231,18 @@ namespace YtDlpGui.WPF.Views {
                 var dep_youtubedl = deps.FirstOrDefault(x => Regex.IsMatch(Path.GetFileName(x), isYoutubeDl), "");
                 if (string.IsNullOrWhiteSpace(DLP.Path_DLP)) {
                     if (!string.IsNullOrWhiteSpace(dep_ytdlp)) {
-                        Data.PathYTDLP = DLP.Path_DLP = dep_ytdlp;
+                        Data.Paths.PathYTDLP = DLP.Path_DLP = dep_ytdlp;
                     } else if (!string.IsNullOrWhiteSpace(dep_youtubedl)) {
-                        Data.PathYTDLP = DLP.Path_DLP = dep_youtubedl;
+                        Data.Paths.PathYTDLP = DLP.Path_DLP = dep_youtubedl;
                     }
 
                 }
                 if (Regex.IsMatch(DLP.Path_DLP, isYoutubeDl)) DLP.Type = DLP.DLPType.youtube_dl;
                 if (string.IsNullOrWhiteSpace(DLP.Path_Aria2)) {
-                    Data.PathAria2 = DLP.Path_Aria2 = dep_aria2;
+                    Data.Paths.PathAria2 = DLP.Path_Aria2 = dep_aria2;
                 }
                 if (string.IsNullOrWhiteSpace(FFMPEG.Path_FFMPEG)) {
-                    Data.PathFFMPEG = DLP.Path_FFMPEG = FFMPEG.Path_FFMPEG = dep_ffmpeg;
+                    Data.Paths.PathFFMPEG = DLP.Path_FFMPEG = FFMPEG.Path_FFMPEG = dep_ffmpeg;
                 }
             }
         }
@@ -278,7 +278,7 @@ namespace YtDlpGui.WPF.Views {
             cs.SelectedIndex = -1;
             Data.OutputPath.Thumbnail = null;
             Data.Video = new();
-            Data.NeedCookie = Data.UseCookie == UseCookie.Always;
+            Data.CookieSettings.NeedCookie = Data.CookieSettings.UseCookie == UseCookie.Always;
 
             Task.Run(() => {
                 GetInfo();
@@ -295,7 +295,7 @@ namespace YtDlpGui.WPF.Views {
         private void GetInfo() {
             //Analyze
             var dlp = new DLP(Data.Url);
-            if (Data.NeedCookie) dlp.Cookie(Data.CookieType);
+            if (Data.CookieSettings.NeedCookie) dlp.Cookie(Data.CookieSettings.CookieType);
             dlp.Proxy(Data.Network.ProxyUrl, Data.Network.ProxyEnabled);
             dlp.GetInfo();
             if (!string.IsNullOrWhiteSpace(Data.selectedConfig.file)) {
@@ -367,17 +367,17 @@ namespace YtDlpGui.WPF.Views {
 
             });
             dlp.Err(DLP.DLPError.Sign, () => {
-                if (Data.UseCookie == UseCookie.WhenNeeded) {
-                    Data.NeedCookie = true;
+                if (Data.CookieSettings.UseCookie == UseCookie.WhenNeeded) {
+                    Data.CookieSettings.NeedCookie = true;
                     GetInfo();
-                } else if (Data.UseCookie == UseCookie.Ask) {
+                } else if (Data.CookieSettings.UseCookie == UseCookie.Ask) {
                     var mb = System.Windows.Forms.MessageBox.Show(
                         $"{App.Lang.Dialog.CookieRequired}\n",
                         $"{App.AppName}",
                         MessageBoxButtons.YesNo);
 
                     if (mb == System.Windows.Forms.DialogResult.Yes) {
-                        Data.NeedCookie = true;
+                        Data.CookieSettings.NeedCookie = true;
                         GetInfo();
                     }
                 }
@@ -480,7 +480,7 @@ namespace YtDlpGui.WPF.Views {
                         .Temp(GetTempPath)
                         .LoadConfig(Data.selectedConfig.file)
                         .MTime(Data.DownloadOptions.ModifiedType)
-                        .Cookie(Data.CookieType, Data.NeedCookie)
+                        .Cookie(Data.CookieSettings.CookieType, Data.CookieSettings.NeedCookie)
                         .Proxy(Data.Network.ProxyUrl, Data.Network.ProxyEnabled)
                         .UseAria2(Data.DownloadOptions.UseAria2)
                         .LimitRate(Data.DownloadOptions.LimitRate)
@@ -545,7 +545,7 @@ namespace YtDlpGui.WPF.Views {
                         //Send notification when download completed
                         try {
                             if (Data.DownloadOptions.UseNotifications) {
-                                Util.NotifySound(Data.PathNotify);
+                                Util.NotifySound(Data.Paths.PathNotify);
                                 var toast = new ToastContentBuilder()
                                     .AddText(Data.Video.title)
                                     .AddText(App.Lang.Dialog.DownloadCompleted)
@@ -694,9 +694,9 @@ namespace YtDlpGui.WPF.Views {
         private void ComboBox_TextChanged(object sender, TextChangedEventArgs e) {
             var combo = sender as System.Windows.Controls.ComboBox;
             if (combo.SelectedIndex == -1) {
-                Data.PathTEMP = combo.Text;
+                Data.Paths.PathTEMP = combo.Text;
             } else {
-                Data.PathTEMP = combo.SelectedValue.ToString();
+                Data.Paths.PathTEMP = combo.SelectedValue.ToString();
             }
         }
 
@@ -704,15 +704,15 @@ namespace YtDlpGui.WPF.Views {
             var b = sender as ToggleButton;
             if (b.IsChecked == true) {
                 var menu = new List<MenuDataItem>() {
-                    (App.Lang.Main.TemporaryTarget, () => { Data.PathTEMP = "%YTDLPGUI_TARGET%"; }),
-                    (App.Lang.Main.TemporaryLocale, () => { Data.PathTEMP = "%YTDLPGUI_LOCALE%"; }),
-                    (App.Lang.Main.TemporarySystem, () => { Data.PathTEMP = "%TEMP%"; }),
+                    (App.Lang.Main.TemporaryTarget, () => { Data.Paths.PathTEMP = "%YTDLPGUI_TARGET%"; }),
+                    (App.Lang.Main.TemporaryLocale, () => { Data.Paths.PathTEMP = "%YTDLPGUI_LOCALE%"; }),
+                    (App.Lang.Main.TemporarySystem, () => { Data.Paths.PathTEMP = "%TEMP%"; }),
                     ("-"),
                     (App.Lang.Main.TemporaryBrowse, () => {
                         var dialog = new FolderBrowserDialog();
-                        dialog.SelectedPath = GetEnvPath(Data.PathTEMP);
+                        dialog.SelectedPath = GetEnvPath(Data.Paths.PathTEMP);
                         if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                            Data.PathTEMP = dialog.SelectedPath;
+                            Data.Paths.PathTEMP = dialog.SelectedPath;
                         }
                     })
                 };
@@ -724,22 +724,22 @@ namespace YtDlpGui.WPF.Views {
             var b = sender as ToggleButton;
             if (b.IsChecked == true) {
                 var menu = new List<MenuDataItem>() {
-                    (App.Lang.Main.SoundSystem, () => { Data.PathNotify = ""; }),
+                    (App.Lang.Main.SoundSystem, () => { Data.Paths.PathNotify = ""; }),
                     ("-"),
                     (App.Lang.Main.SoundBrowse, () => {
                         var dialog = new OpenFileDialog();
-                        var dirname = Path.GetDirectoryName(Data.PathNotify);
+                        var dirname = Path.GetDirectoryName(Data.Paths.PathNotify);
                         Debug.WriteLine(dirname);
                         if (Directory.Exists(dirname)) {
                             dialog.InitialDirectory = dirname;
-                            if (File.Exists(Data.PathNotify)) {
-                                dialog.FileName = Path.GetFileName(Data.PathNotify);
+                            if (File.Exists(Data.Paths.PathNotify)) {
+                                dialog.FileName = Path.GetFileName(Data.Paths.PathNotify);
                             }
                         } else {
                             dialog.InitialDirectory = App.AppPath;
                         }
                         if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                            Data.PathNotify = dialog.FileName;
+                            Data.Paths.PathNotify = dialog.FileName;
                         }
                     })
                 };
@@ -748,7 +748,7 @@ namespace YtDlpGui.WPF.Views {
         }
 
         private void Button_PlayNotify(object sender, RoutedEventArgs e) {
-            Util.NotifySound(Data.PathNotify);
+            Util.NotifySound(Data.Paths.PathNotify);
         }
 
         private void TextBoxNumber_Changed(object sender, EventArgs e) {
