@@ -27,7 +27,7 @@ This fork aims to:
 | Aspect | Original | This Fork |
 |--------|----------|-----------|
 | .NET Version | 6.0 (EOL Nov 2024) | 8.0 (LTS until Nov 2026) |
-| Architecture | Monolithic ViewData (86 props) | 10 focused ViewModels (31 props, 64% reduction) |
+| Architecture | Monolithic ViewData (86 props) | 11 focused ViewModels (21 props, 76% reduction) |
 | Testing | None (0%) | xUnit + Moq (60%+ target, planned) |
 | DI Container | None | Microsoft.Extensions.DependencyInjection (planned) |
 | CI/CD | None | GitHub Actions ✅ |
@@ -62,7 +62,7 @@ This fork aims to:
 * 📁 **Organized Structure**: 4-layer architecture (Core, Services, ViewModels, WPF)
 * 📦 **Central Package Management**: Single source of truth for all dependencies
 * 🔄 **CI/CD Pipeline**: Automated builds with GitHub Actions
-* 🧩 **Focused ViewModels**: 10 single-responsibility ViewModels extracted from God Object (64% reduction!)
+* 🧩 **Focused ViewModels**: 11 single-responsibility ViewModels extracted from God Object (76% reduction!)
 * 🔧 **Better Maintainability**: 58 files reorganized for easier testing and development
 
 ---
@@ -96,8 +96,8 @@ This fork aims to:
 - [x] **Central Package Management** - Directory.Packages.props for centralized version control
 - [x] **GitHub Actions CI/CD** - Automated build pipeline on Windows runner
 
-#### Phase 2-2: Architecture Refactoring (🚧 In Progress - 64% Complete)
-- [x] **Extract ViewData into focused ViewModels** - 10 ViewModels created
+#### Phase 2-2: Architecture Refactoring (🚧 In Progress - 76% Complete)
+- [x] **Extract ViewData into focused ViewModels** - 11 ViewModels created
   - ✅ UpdateViewModel (5 properties) - Update check functionality
   - ✅ WindowStateViewModel (8 properties) - Window position, size, scale
   - ✅ NetworkSettingsViewModel (2 properties) - Proxy configuration
@@ -107,7 +107,8 @@ This fork aims to:
   - ✅ DownloadOptionsViewModel (10 properties) - Download settings
   - ✅ CookieSettingsViewModel (3 properties) - Cookie management
   - ✅ PathsViewModel (5 properties) - External tool paths
-  - **Result**: ViewData reduced from 86 → 31 properties (**64% reduction!** 🎉)
+  - ✅ UIStateViewModel (10 properties) - UI state flags and display properties
+  - **Result**: ViewData reduced from 86 → 21 properties (**76% reduction!** 🎉)
 - [ ] Create service interfaces (IDownloadService, IFormatService, etc.)
 - [ ] Introduce dependency injection container
 - [ ] Remove code-behind logic with Command pattern
