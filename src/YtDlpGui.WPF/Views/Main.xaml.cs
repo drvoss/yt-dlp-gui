@@ -160,7 +160,7 @@ namespace YtDlpGui.WPF.Views {
 
             var sc = new SharpClipboard();
             sc.ClipboardChanged += (s, e) => {
-                if (!Data.IsMonitor || Data.IsAnalyze || Data.DownloadProgress.IsDownload) return;
+                if (!Data.UIState.IsMonitor || Data.UIState.IsAnalyze || Data.DownloadProgress.IsDownload) return;
                 if (e.ContentType == SharpClipboard.ContentTypes.Text) {
                     Data.ClipboardText = GetClipbaordText();
                 }
@@ -271,7 +271,7 @@ namespace YtDlpGui.WPF.Views {
             Analyze_Start();
         }
         private void Analyze_Start() {
-            Data.IsAnalyze = true;
+            Data.UIState.IsAnalyze = true;
             cc.SelectedIndex = -1;
             cv.SelectedIndex = -1;
             ca.SelectedIndex = -1;
@@ -282,9 +282,9 @@ namespace YtDlpGui.WPF.Views {
 
             Task.Run(() => {
                 GetInfo();
-                Data.IsAnalyze = false;
+                Data.UIState.IsAnalyze = false;
 
-                if (Data.AutoDownloadAnalysed) {
+                if (Data.UIState.AutoDownloadAnalysed) {
                     //Download_Start();
                     if (Data.FormatSelection.selectedVideo != null && Data.FormatSelection.selectedAudio != null) {
                         Download_Start_Native();
@@ -316,10 +316,10 @@ namespace YtDlpGui.WPF.Views {
                         Data.Chapters.Add(new Chapters() { title = App.Lang.Main.ChaptersAll, type = ChaptersType.None });
                         Data.Chapters.Add(new Chapters() { title = App.Lang.Main.ChaptersSplite, type = ChaptersType.Split });
                         Data.Chapters.AddRange(Data.Video.chapters);
-                        Data.hasChapter = true;
+                        Data.UIState.hasChapter = true;
                     } else {
                         Data.Chapters.Add(new Chapters() { title = App.Lang.Main.ChaptersNone, type = ChaptersType.None });
-                        Data.hasChapter = false;
+                        Data.UIState.hasChapter = false;
                     }
                     //Data.FormatSelection.selectedChapter = Data.Chapters.First();
                 }
@@ -341,10 +341,10 @@ namespace YtDlpGui.WPF.Views {
                     Data.Subtitles.Clear();
                     if (subs.Any()) {
                         Data.Subtitles.Add(new Subs() { name = App.Lang.Main.SubtitleIgnore });
-                        Data.hasSubtitle = true;
+                        Data.UIState.hasSubtitle = true;
                     } else {
                         Data.Subtitles.Add(new Subs() { name = App.Lang.Main.SubtitleNone });
-                        Data.hasSubtitle = false;
+                        Data.UIState.hasSubtitle = false;
                     }
                     Data.Subtitles.AddRange(subs);
                 }
@@ -429,7 +429,7 @@ namespace YtDlpGui.WPF.Views {
         }
         private void Button_Cancel(object sender, RoutedEventArgs e) {
             if (Data.DownloadProgress.IsDownload) {
-                Data.IsAbouted = true;
+                Data.UIState.IsAbouted = true;
                 foreach (var dlp in RunningDLP) {
                     dlp.Close();
                 }
@@ -442,9 +442,9 @@ namespace YtDlpGui.WPF.Views {
         public enum DownloadType { Normal, Video, Audio, Thumbnail, Subtitle }
         private async void Download_Start_Native(DownloadType type = DownloadType.Normal, string target = "") {
             Data.DownloadProgress.CanCancel = false;
-            Data.IsAbouted = false;
+            Data.UIState.IsAbouted = false;
             if (Data.DownloadProgress.IsDownload) {
-                Data.IsAbouted = true;
+                Data.UIState.IsAbouted = true;
                 foreach (var dlp in RunningDLP) {
                     dlp.Close();
                 }
@@ -525,7 +525,7 @@ namespace YtDlpGui.WPF.Views {
                     //WaitAll Downloads, Merger Video and Audio
                     Data.DownloadProgress.CanCancel = true;
                     Task.WaitAll(tasks.ToArray());
-                    if (!Data.IsAbouted) {
+                    if (!Data.UIState.IsAbouted) {
                         Data.DownloadProgress.DNStatus_Infos["Status"] = App.Lang.Status.Done;
 
                         //post-process

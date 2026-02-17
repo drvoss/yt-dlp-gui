@@ -84,10 +84,10 @@ namespace YtDlpGui.WPF.Views {
                         // Update package connection
                         if (FormatSelection.selectedVideo != null && FormatSelection.selectedAudio != null) {
                             if (FormatSelection.selectedVideo.type == FormatType.package) {
-                                IsPackage = true;
+                                UIState.IsPackage = true;
                                 FormatSelection.selectedAudio = FormatSelection.selectedVideo;
                             } else {
-                                IsPackage = false;
+                                UIState.IsPackage = false;
                                 if (FormatSelection.selectedAudio.type == FormatType.package) {
                                     FormatSelection.selectedAudio = FormatsAudio.FirstOrDefault(x => x.type != FormatType.package);
                                 }
@@ -98,9 +98,6 @@ namespace YtDlpGui.WPF.Views {
                         break;
                     case nameof(OutputPath):
                         UpdateOutputPath();
-                        break;
-                    case nameof(ImageWidth):
-                        ImageHeight = ImageWidth * 0.5625d;
                         break;
                 }
                 CheckEnable();
@@ -159,20 +156,15 @@ namespace YtDlpGui.WPF.Views {
             public IEnumerable<Thumb> ThumbnailsView => Thumbnails.CollectionView;
             public ConcurrentObservableCollection<Subs> Subtitles { get; set; } = new();
             public IEnumerable<Subs> SubtitlesView => Subtitles.CollectionView;
-            public bool hasChapter { get; set; } = false;
-            public bool hasSubtitle { get; set; } = false;
-            public bool IsAnalyze { get; set; } = false;
+            
+            // UI state - extracted to UIStateViewModel
+            public UIStateViewModel UIState { get; set; } = new();
             
             // Format selection - extracted to FormatSelectionViewModel
             public FormatSelectionViewModel FormatSelection { get; set; } = new();
             
             // Download progress - extracted to DownloadProgressViewModel
             public DownloadProgressViewModel DownloadProgress { get; set; } = new();
-            
-            public bool IsAbouted { get; set; } = false;
-            public bool IsMonitor { get; set; } = false;
-            public bool AlwaysOnTop { get; set; } = false;
-            public bool AutoDownloadAnalysed { get; set; } = false;
             
             // Window state - extracted to WindowStateViewModel
             public WindowStateViewModel WindowState { get; set; } = new();
@@ -194,10 +186,6 @@ namespace YtDlpGui.WPF.Views {
             
             public string Url { get; set; } = string.Empty;
             public string CommandLine { get; set; } = string.Empty;
-            public bool IsPackage { get; set; } = false;
-            public double ImageWidth { get; set; } = 0; //Binding 16:9
-            public double ImageHeight { get; set; } = 0;
-            public string ExecText { get; set; } = string.Empty;
             public Enable Enable { get; set; } = new();
             public bool AutoSaveConfig { get; set; } = false;
             // Update-related properties - extracted to UpdateViewModel
@@ -225,7 +213,7 @@ namespace YtDlpGui.WPF.Views {
                 Enable.UseAria2 = true;
 
                 if (string.IsNullOrWhiteSpace(Url)) Enable.Analyze = false;
-                if (IsAnalyze) {
+                if (UIState.IsAnalyze) {
                     Enable.Url = false;
                     Enable.Analyze = false;
                     Enable.SelectChapters = false;
@@ -291,9 +279,9 @@ namespace YtDlpGui.WPF.Views {
                     }
                 }
                 if (Video.is_live == true) {
-                    ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Stop : App.Lang.Main.Record;
+                    UIState.ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Stop : App.Lang.Main.Record;
                 } else {
-                    ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Cancel : App.Lang.Main.Download;
+                    UIState.ExecText = DownloadProgress.IsDownload ? App.Lang.Main.Cancel : App.Lang.Main.Download;
                 }
             }
         }
