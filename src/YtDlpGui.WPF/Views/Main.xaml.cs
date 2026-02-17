@@ -268,9 +268,128 @@ namespace YtDlpGui.WPF.Views {
             }
         }
         private void Button_Analyze(object sender, RoutedEventArgs e) {
+            Debug.WriteLine("=== Analyze Button Clicked ===");
+            Debug.WriteLine($"URL: {Data.Url}");
+            Debug.WriteLine($"PathYTDLP: {Data.Paths.PathYTDLP}");
+            Debug.WriteLine($"DLP.Path_DLP: {DLP.Path_DLP}");
+            
+            // Check if yt-dlp.exe exists
+            if (string.IsNullOrWhiteSpace(DLP.Path_DLP) || !File.Exists(DLP.Path_DLP)) {
+                var result = System.Windows.Forms.MessageBox.Show(
+                    $"yt-dlp.exe를 찾을 수 없습니다.\n\n" +
+                    $"yt-dlp.exe는 YouTube 비디오 정보를 가져오는 데 필요한 도구입니다.\n" +
+                    $"지금 자동으로 다운로드하시겠습니까?\n\n" +
+                    $"다운로드 위치: {App.AppPath}\n" +
+                    $"파일 크기: 약 17 MB\n" +
+                    $"출처: https://github.com/yt-dlp/yt-dlp",
+                    $"{App.AppName} - yt-dlp.exe 필요",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == System.Windows.Forms.DialogResult.Yes) {
+                    // Download yt-dlp.exe
+                    if (!DownloadYtDlp()) {
+                        return; // Download failed, abort
+                    }
+                } else {
+                    return; // User cancelled
+                }
+            }
+            
             Analyze_Start();
         }
+        
+        private bool DownloadYtDlp() {
+            try {
+                var targetPath = Path.Combine(App.AppPath, "yt-dlp.exe");
+                var downloadUrl = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe";
+                
+                // Show progress message
+                var progressForm = new System.Windows.Forms.Form() {
+                    Text = $"{App.AppName} - 다운로드 중",
+                    Width = 400,
+                    Height = 150,
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    StartPosition = FormStartPosition.CenterScreen,
+                    MaximizeBox = false,
+                    MinimizeBox = false,
+                    ControlBox = false
+                };
+                
+                var label = new System.Windows.Forms.Label() {
+                    Text = "yt-dlp.exe를 다운로드하는 중...\n잠시만 기다려주세요.",
+                    AutoSize = false,
+                    TextAlign = System.Drawing.ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Fill
+                };
+                
+                progressForm.Controls.Add(label);
+                
+                // Download in background
+                var downloadTask = Task.Run(() => {
+                    using (var client = new System.Net.WebClient()) {
+                        client.DownloadProgressChanged += (s, e) => {
+                            progressForm.BeginInvoke(new Action(() => {
+                                label.Text = $"yt-dlp.exe를 다운로드하는 중...\n" +
+                                           $"{e.ProgressPercentage}% ({e.BytesReceived / 1024 / 1024:F1} MB / {e.TotalBytesToReceive / 1024 / 1024:F1} MB)";
+                            }));
+                        };
+                        
+                        client.DownloadFileCompleted += (s, e) => {
+                            progressForm.BeginInvoke(new Action(() => {
+                                progressForm.Close();
+                            }));
+                        };
+                        
+                        client.DownloadFileAsync(new Uri(downloadUrl), targetPath);
+                        
+                        // Wait for completion
+                        while (client.IsBusy) {
+                            Thread.Sleep(100);
+                        }
+                    }
+                });
+                
+                progressForm.ShowDialog();
+                downloadTask.Wait();
+                
+                // Verify download
+                if (File.Exists(targetPath)) {
+                    var fileInfo = new FileInfo(targetPath);
+                    if (fileInfo.Length > 1024 * 1024) { // At least 1 MB
+                        Data.Paths.PathYTDLP = DLP.Path_DLP = targetPath;
+                        
+                        System.Windows.Forms.MessageBox.Show(
+                            $"yt-dlp.exe 다운로드가 완료되었습니다!\n\n" +
+                            $"경로: {targetPath}\n" +
+                            $"크기: {fileInfo.Length / 1024 / 1024:F2} MB\n\n" +
+                            $"이제 Analyze를 계속 진행합니다.",
+                            $"{App.AppName} - 다운로드 완료",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                        
+                        return true;
+                    } else {
+                        throw new Exception("다운로드된 파일이 너무 작습니다.");
+                    }
+                } else {
+                    throw new Exception("파일 다운로드에 실패했습니다.");
+                }
+            } catch (Exception ex) {
+                System.Windows.Forms.MessageBox.Show(
+                    $"yt-dlp.exe 다운로드 중 오류가 발생했습니다:\n\n" +
+                    $"{ex.Message}\n\n" +
+                    $"수동으로 다운로드하려면 다음 링크를 방문하세요:\n" +
+                    $"https://github.com/yt-dlp/yt-dlp/releases/latest",
+                    $"{App.AppName} - 다운로드 실패",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                
+                return false;
+            }
+        }
         private void Analyze_Start() {
+            Debug.WriteLine("Analyze_Start() called");
             Data.UIState.IsAnalyze = true;
             cc.SelectedIndex = -1;
             cv.SelectedIndex = -1;
@@ -281,8 +400,16 @@ namespace YtDlpGui.WPF.Views {
             Data.CookieSettings.NeedCookie = Data.CookieSettings.UseCookie == UseCookie.Always;
 
             Task.Run(() => {
-                GetInfo();
-                Data.UIState.IsAnalyze = false;
+                try {
+                    Debug.WriteLine("Starting GetInfo()...");
+                    GetInfo();
+                    Debug.WriteLine("GetInfo() completed successfully");
+                } catch (Exception ex) {
+                    Debug.WriteLine($"ERROR in GetInfo(): {ex.Message}");
+                    Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                } finally {
+                    Data.UIState.IsAnalyze = false;
+                }
 
                 if (Data.UIState.AutoDownloadAnalysed) {
                     //Download_Start();
